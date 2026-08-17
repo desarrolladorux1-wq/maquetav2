@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta name="description" content="Administración transversal de la plataforma Paulet FISE">
+  <title>Administración | Paulet FISE</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="../../estilos_generales.css?v=20260814-1">
+  <link rel="stylesheet" href="../../estilos_asistente_ia.css?v=20260813-3">
+  <link rel="stylesheet" href="admin.css?v=20260729-11">
+<link rel="stylesheet" href="../../tema_oscuro.css?v=20260814-16">
+</head>
+<body>
+  <div class="aplicacion aplicacion-admin">
+    <aside class="menu-lateral" aria-label="Menú de Administración">
+      <header class="menu-cabecera">
+        <a class="menu-marca" href="#satcontrol" aria-label="SATCONTROL de Administración">
+          <img class="menu-logo" src="../../img/logo_fise.png" alt="">
+          <span class="menu-marca-texto"><strong>Administración</strong><small>Plataforma Paulet</small></span>
+        </a>
+        <button class="boton-menu" type="button" data-accion="alternar-menu" aria-label="Contraer o ampliar menú"><span aria-hidden="true"></span></button>
+      </header>
+
+      <div class="menu-contenido">
+        <nav class="arbol-admin" aria-label="Opciones de Administración">
+          <section class="acordeon-admin" data-grupo-admin="proyectos">
+            <button class="cabecera-acordeon-admin" type="button" data-alternar-grupo="proyectos" aria-expanded="false">
+              <span class="icono-arbol-admin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 6.5h6l2 2h9v11h-17z"/><path d="M3.5 9h17"/></svg></span>
+              <span>Proyectos</span><i aria-hidden="true"></i>
+            </button>
+            <div class="contenido-acordeon-admin">
+              <a class="opcion-arbol-admin" href="#satcontrol" data-vista="satcontrol" data-etiqueta="SATCONTROL">
+                <span class="icono-arbol-admin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5 9 3l6 2.5L20 3v15.5L15 21l-6-2.5L4 21z"/><path d="M9 3v15.5M15 5.5V21"/></svg></span>
+                <span>SATCONTROL</span>
+              </a>
+              <button class="opcion-arbol-admin" type="button" data-accion-admin="crear-proyecto">
+                <span class="icono-arbol-admin" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg></span>
+                <span>Crear proyecto</span>
+              </button>
+              <button class="opcion-arbol-admin" type="button" data-accion-admin="listar-proyectos">
+                <span class="icono-arbol-admin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 10h16M9 5v14"/></svg></span>
+                <span>Listar proyectos</span>
+              </button>
+              <button class="opcion-arbol-admin" type="button" data-accion-admin="eliminar-proyectos">
+                <span class="icono-arbol-admin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg></span>
+                <span>Eliminar proyectos</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="acordeon-admin" data-grupo-admin="usuarios">
+            <button class="cabecera-acordeon-admin" type="button" data-alternar-grupo="usuarios" aria-expanded="false">
+              <span class="icono-arbol-admin" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19c.5-4 2.3-6 5.5-6s5 2 5.5 6M13 14c3-.4 5 .9 6 4"/></svg></span>
+              <span>Usuarios</span><i aria-hidden="true"></i>
+            </button>
+            <div class="contenido-acordeon-admin">
+              <button class="opcion-arbol-admin" type="button" data-accion-admin="crear-usuario">
+                <span class="icono-arbol-admin" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c.5-4 2.4-6 5.5-6s5 2 5.5 6M18 8v6M15 11h6"/></svg></span>
+                <span>Crear usuario</span>
+              </button>
+              <button class="opcion-arbol-admin" type="button" data-accion-admin="listar-usuarios">
+                <span class="icono-arbol-admin" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2.4"/><circle cx="16" cy="8" r="2.4"/><path d="M2.5 18c.4-3.2 1.9-4.8 4.5-4.8s4.1 1.6 4.5 4.8M11.5 18c.4-3.2 1.9-4.8 4.5-4.8s4.1 1.6 4.5 4.8"/></svg></span>
+                <span>Listar usuarios</span>
+              </button>
+            </div>
+          </section>
+
+          <div id="enlacesModulosMenu" class="modulos-acordeon-admin"></div>
+        </nav>
+      </div>
+
+      <footer class="menu-pie">
+        <a class="enlace-menu cerrar-sesion" href="../login/login.html" data-etiqueta="Cerrar sesión">
+          <span class="menu-icono" aria-hidden="true">â†ª</span><span class="enlace-texto">Cerrar sesión</span>
+        </a>
+      </footer>
+    </aside>
+
+    <button class="boton-menu boton-menu-movil" type="button" data-accion="abrir-menu-movil" aria-label="Abrir menú"><span aria-hidden="true"></span></button>
+    <button class="velo-menu" type="button" data-accion="cerrar-menu-movil" aria-label="Cerrar menú"></button>
+
+    <main class="contenido-principal contenido-admin">
+      <header class="cabecera-admin">
+        <div>
+          <span class="sobrelinea" id="sobrelineaVista">NODO FISE · GESTIÓN TRANSVERSAL</span>
+          <h1 id="tituloVista">Administración de Plataforma</h1>
+          <p id="descripcionVista">Control centralizado de proyectos, módulos, información geográfica y usuarios.</p>
+        </div>
+        <div class="estado-plataforma"><i></i><span><b>Plataforma operativa</b><small id="fechaActualizacion">Actualización local</small></span></div>
+      </header>
+
+      <section class="vista-admin activa" id="vistaInicio" data-vista-contenido="inicio">
+        <div class="kpis-admin" id="kpisAdmin"></div>
+
+        <div class="rejilla-inicio">
+          <section class="tarjeta-admin tarjeta-modulos">
+            <header class="cabecera-tarjeta">
+              <div><span class="sobrelinea">ACCESO TRANSVERSAL</span><h2>Módulos de la plataforma</h2><p>Acceda directamente a cada panel operativo.</p></div>
+              <span class="contador-etiqueta" id="contadorModulos">0 módulos</span>
+            </header>
+            <div class="rejilla-modulos" id="rejillaModulos"></div>
+          </section>
+
+          <section class="tarjeta-admin actividad-admin">
+            <header class="cabecera-tarjeta">
+              <div><span class="sobrelinea">ACTIVIDAD</span><h2>Estado general</h2><p>Resumen de administración y control.</p></div>
+            </header>
+            <div class="lista-actividad" id="listaActividad"></div>
+          </section>
+        </div>
+
+        <section class="tarjeta-admin">
+          <header class="cabecera-tarjeta">
+            <div><span class="sobrelinea">PROYECTOS</span><h2>Portafolio activo</h2><p>Avance consolidado de las iniciativas registradas.</p></div>
+            <button class="boton-secundario" type="button" data-ir-vista="proyectos">Ver todos los proyectos</button>
+          </header>
+          <div class="proyectos-resumen" id="proyectosResumen"></div>
+        </section>
+      </section>
+
+      <section class="vista-admin" id="vistaProyectos" data-vista-contenido="proyectos" hidden>
+        <section class="tarjeta-admin listado-proyectos-admin">
+          <header class="cabecera-tarjeta cabecera-listado-proyectos">
+            <div><span class="sobrelinea">PROYECTOS</span><h2>Listar proyectos</h2><p>Consulte y administre las intervenciones registradas en la plataforma.</p></div>
+            <div class="acciones-listado-proyectos">
+              <button class="boton-secundario" type="button" id="exportarProyectosExcel">â†“ Exportar a Excel</button>
+              <button class="boton-principal" type="button" id="botonNuevoProyecto">+ Crear proyecto</button>
+            </div>
+          </header>
+          <div class="busqueda-listado-proyectos">
+            <label for="buscarProyecto">Nombre</label>
+            <div class="campo-busqueda-proyecto"><span aria-hidden="true">âŒ•</span><input id="buscarProyecto" type="search" placeholder="Buscar..." autocomplete="off"></div>
+          </div>
+          <div class="tabla-scroll-proyectos">
+            <table class="tabla-proyectos-admin">
+              <thead><tr><th>Código</th><th>Nombre</th><th>Estado</th><th>Tipo de proyecto</th><th>Beneficiario(s)</th><th>Ver documento</th><th>Ver imagen</th><th>Acciones</th></tr></thead>
+              <tbody id="cuerpoProyectos"></tbody>
+            </table>
+          </div>
+          <footer class="paginacion-proyectos">
+            <button type="button" id="paginaProyectoAnterior">â€¹ Anterior</button>
+            <span id="paginaProyectoActual">Página 1 de 1</span>
+            <button type="button" id="paginaProyectoSiguiente">Siguiente â€º</button>
+          </footer>
+        </section>
+      </section>
+
+      <section class="vista-admin" id="vistaSatcontrol" data-vista-contenido="satcontrol" hidden>
+        <section class="filtros-admin" id="contenedorFiltrosAdmin">
+          <form id="formularioFiltrosMapa">
+            <label class="filtro-admin"><span>Módulo</span><select id="filtroModulo"><option value="">Todos los módulos</option></select></label>
+            <label class="filtro-admin"><span>Región</span><select id="filtroRegion"><option value="">Todas</option></select></label>
+            <label class="filtro-admin"><span>Departamento</span><select id="filtroDepartamento"><option value="">Todos</option></select></label>
+            <label class="filtro-admin"><span>Provincia</span><select id="filtroProvincia"><option value="">Todas</option></select></label>
+            <label class="filtro-admin"><span>Distrito</span><select id="filtroDistrito"><option value="">Todos</option></select></label>
+            <label class="filtro-admin"><span>Proyecto</span><select id="filtroProyecto"><option value="">Todos los proyectos</option></select></label>
+            <label class="filtro-admin"><span>Estado</span><select id="filtroEstado"><option value="">Todos</option></select></label>
+            <label class="filtro-admin filtro-empresa"><span>Empresa / concesionaria</span><select id="filtroEmpresa"><option value="">Todas</option></select></label>
+            <div class="acciones-filtros">
+              <button class="boton-principal" type="submit">Aplicar filtros</button>
+              <button class="boton-secundario" type="reset">Restablecer</button>
+            </div>
+          </form>
+          <button class="boton-colapsar-filtros" id="botonColapsarFiltros" type="button" aria-expanded="true" aria-label="Ocultar filtros">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </section>
+
+        <div class="satcontrol-admin">
+          <section class="mapa-admin-panel">
+            <div id="mapaAdmin"></div>
+
+            <div class="controles-mapa-admin" aria-label="Controles del mapa">
+              <button type="button" id="botonMapasAdmin" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h3M11 12h9M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="13" cy="18" r="2"/></svg>Mapas</button>
+              <button type="button" id="botonCapasAdmin" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3-9 5 9 5 9-5-9-5z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg>Capas</button>
+              <button type="button" id="botonTematicosAdmin" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 16.5c1.2-1.9 1.7-4.2 1.7-6.5a3.8 3.8 0 0 1 7.6 0c0 2.3.5 4.6 1.7 6.5"/><path d="M5 17h14M9.5 20h5"/></svg>Temáticos</button>
+            </div>
+
+            <div class="panel-mapa-flotante" id="panelMapasAdmin" hidden>
+              <strong>Mapas base</strong>
+              <label><input type="radio" name="mapaBaseAdmin" value="osm" checked> OpenStreetMap</label>
+              <label><input type="radio" name="mapaBaseAdmin" value="topografico"> Topográfico</label>
+            </div>
+            <div class="panel-mapa-flotante panel-catalogo-mapa" id="panelCapasAdmin" hidden>
+              <header>
+                <strong>Capas por módulo</strong>
+                <small>Active o desactive la información de cada programa.</small>
+              </header>
+              <div class="controles-capas-globales">
+                <label><input id="capaPuntos" type="checkbox" checked> Mostrar registros</label>
+                <label><input id="capaClusters" type="checkbox" checked> Clusterización por módulo</label>
+                <label><input id="capaCalor" type="checkbox"> Densidad global</label>
+              </div>
+              <div class="catalogo-modulos-mapa" id="gruposCapasModulos"></div>
+            </div>
+            <div class="panel-mapa-flotante panel-catalogo-mapa" id="panelTematicosAdmin" hidden>
+              <header>
+                <strong>Temáticos por módulo</strong>
+                <small>Seleccione un análisis; se respetan los filtros activos.</small>
+              </header>
+              <label class="tematico-global"><input id="tematicoDensidad" type="checkbox"> Densidad global de la plataforma</label>
+              <div class="catalogo-modulos-mapa" id="gruposTematicosModulos"></div>
+              <div class="leyenda-tematica"><span>Baja</span><i></i><span>Alta</span></div>
+              <small id="descripcionTematicoAdmin">Sin análisis temático activo.</small>
+            </div>
+
+            <button class="boton-herramientas-mapa" id="botonHerramientasMapa" type="button" aria-expanded="false" aria-label="Abrir herramientas" title="Herramientas">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4.2 4.2 0 0 0-5.4 5.4L3.8 17.2a2.1 2.1 0 0 0 3 3l5.5-5.5a4.2 4.2 0 0 0 5.4-5.4l-2.6 2.6-3-3 2.6-2.6Z"/></svg>
+              <span>Herramientas</span>
+              <b aria-hidden="true">âŒ„</b>
+            </button>
+
+            <aside class="panel-herramientas-mapa compacto" id="panelHerramientasMapa" hidden aria-label="Herramientas del mapa">
+              <div class="grupo-herramientas-admin-rapidas" aria-label="Herramientas rápidas">
+                <button type="button" data-herramienta-rapida="consultar" title="Seleccionar registros"><svg viewBox="0 0 24 24"><path d="M5 3.5 18.5 13l-6.1 1.1-3.3 5.4L5 3.5Z"/><path d="m13 14 4 5"/></svg><span>Seleccionar</span></button>
+                <button type="button" data-herramienta-rapida="poligono" title="Dibujar polígono"><svg viewBox="0 0 24 24"><path d="m6 5 12 3-2 11-12-4L6 5Z"/><circle cx="6" cy="5" r="1.8"/><circle cx="18" cy="8" r="1.8"/><circle cx="16" cy="19" r="1.8"/><circle cx="4" cy="15" r="1.8"/></svg><span>Polígono</span></button>
+                <button type="button" data-herramienta-rapida="circulo" title="Dibujar círculo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1"/></svg><span>Círculo</span></button>
+                <i aria-hidden="true"></i>
+                <button type="button" id="carruselHerramientasRapido" title="Siguiente módulo"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg><span>Módulo</span></button>
+                <button type="button" id="ampliarHerramientasRapido" title="Ver todas las herramientas"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5M10.5 7.5v6M7.5 10.5h6"/></svg><span>Ampliar</span></button>
+                <button type="button" id="moverHerramientasRapido" data-mover-panel title="Mover barra"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3 9.5 5.5M12 3l2.5 2.5M21 12l-2.5-2.5M21 12l-2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12l2.5-2.5M3 12l2.5 2.5"/></svg><span>Mover</span></button>
+              </div>
+              <header>
+                <div><span class="sobrelinea">SATCONTROL</span><h3 id="tituloHerramientasModulo">Herramientas · Vale FISE</h3></div>
+                <div class="acciones-panel-herramientas">
+                  <button id="carruselHerramientas" type="button" aria-label="Siguiente módulo" title="Recorrer módulos"><b>â€¢â€¢â€¢</b></button>
+                  <button id="alternarHerramientas" type="button" aria-label="Ampliar herramientas" title="Ampliar o reducir"><span>Ampliar</span><b>â†—</b></button>
+                  <button id="moverHerramientas" class="control-mover-herramientas" data-mover-panel type="button" aria-label="Mover panel de herramientas" title="Mover panel"><b>âœ¥</b></button>
+                  <button id="cerrarHerramientas" type="button" aria-label="Ocultar herramientas" title="Ocultar"><b>×</b></button>
+                </div>
+              </header>
+              <div class="selector-modulo-herramientas">
+                <button id="herramientasModuloAnterior" type="button" aria-label="Módulo anterior">â€¹</button>
+                <label><span>Módulo</span><select id="selectorModuloHerramientas" aria-label="Módulo de herramientas"></select></label>
+                <b id="posicionCarruselHerramientas">1 / 7</b>
+                <button id="herramientasModuloSiguiente" type="button" aria-label="Módulo siguiente">â€º</button>
+              </div>
+              <div class="grupos-herramientas" id="gruposHerramientas"></div>
+              <footer><button class="boton-limpiar-mapa" id="limpiarAnalisis" type="button">Limpiar análisis</button><span id="estadoHerramienta">Seleccione una herramienta</span></footer>
+            </aside>
+
+            <div class="nivel-geografico-admin" id="nivelGeograficoAdmin">
+              <span>Vista nacional</span><button type="button" id="volverNivelGeografico" hidden>Volver</button>
+            </div>
+            <div class="leyenda-modulos-admin" id="leyendaModulosAdmin" aria-label="Leyenda de módulos"></div>
+            <div class="contador-mapa-admin" id="contadorMapaAdmin">0 registros visibles</div>
+          </section>
+
+          <aside class="resumen-mapa-admin" id="resumenMapaAdmin">
+            <header>
+              <span class="sobrelinea" id="resumenMapaSobrelinea">RESUMEN GENERAL</span>
+              <h2 id="resumenMapaTitulo">Información global</h2>
+              <p id="resumenMapaDescripcion">Integración transversal de todos los módulos.</p>
+            </header>
+            <div id="contenidoResumenMapa"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="vista-admin vista-modulo-admin" id="vistaModulo" data-vista-contenido="modulo" hidden>
+        <iframe id="marcoModuloAdmin" title="Módulo operativo integrado" loading="eager"></iframe>
+      </section>
+
+      <section class="vista-admin" id="vistaUsuarios" data-vista-contenido="usuarios" hidden>
+        <div class="pestanas-usuarios" role="tablist" aria-label="Administración de usuarios">
+          <button class="activa" type="button" role="tab" data-pestana-usuario="crear" aria-selected="true">Crear usuario</button>
+          <button type="button" role="tab" data-pestana-usuario="lista" aria-selected="false">Lista de usuarios <span id="totalUsuariosPestana">0</span></button>
+        </div>
+
+        <section class="panel-usuario activo" id="panelCrearUsuario" data-panel-usuario="crear">
+          <form class="tarjeta-admin formulario-usuario" id="formularioCrearUsuario">
+            <header class="cabecera-tarjeta">
+              <div><span class="sobrelinea">NUEVA CUENTA</span><h2>Crear usuario</h2><p>Registre los datos personales y asigne un perfil de acceso.</p></div>
+              <span class="paso-formulario">01</span>
+            </header>
+            <div class="campos-usuario">
+              <label><span>Nombres</span><input name="nombres" required autocomplete="given-name" placeholder="Ingrese los nombres"></label>
+              <label><span>Apellidos</span><input name="apellidos" required autocomplete="family-name" placeholder="Ingrese los apellidos"></label>
+              <label><span>Teléfono</span><input name="telefono" inputmode="numeric" pattern="[0-9]{9}" required autocomplete="tel" placeholder="9 dígitos"></label>
+              <label class="campo-ancho"><span>Dirección</span><input name="direccion" required autocomplete="street-address" placeholder="Ingrese la dirección"></label>
+              <label><span>Región</span><select name="region" required><option value="">Seleccione una región</option></select></label>
+              <label><span>Correo</span><input name="correo" type="email" required autocomplete="email" placeholder="usuario@correo.com"></label>
+              <label><span>Contraseña</span><span class="campo-clave"><input name="contrasena" type="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres"><button type="button" data-ver-clave aria-label="Mostrar contraseña">â—‰</button></span></label>
+              <label><span>Perfil</span><select name="perfil" required><option value="">Seleccione un perfil de acceso</option></select><small>El perfil determina los permisos iniciales del usuario.</small></label>
+            </div>
+            <footer class="acciones-formulario">
+              <button class="boton-secundario" type="reset">Limpiar</button>
+              <button class="boton-principal" type="submit"><span>ï¼‹</span> Crear usuario</button>
+            </footer>
+          </form>
+        </section>
+
+        <section class="panel-usuario" id="panelListaUsuarios" data-panel-usuario="lista" hidden>
+          <section class="tarjeta-admin tabla-usuarios">
+            <header class="cabecera-tarjeta">
+              <div><span class="sobrelinea">DIRECTORIO</span><h2>Lista de usuarios</h2><p>Consulte, filtre y administre el estado de las cuentas.</p></div>
+              <span class="contador-etiqueta" id="contadorUsuarios">0 usuarios</span>
+            </header>
+            <form class="filtros-usuarios" id="filtrosUsuarios">
+              <label class="buscar-usuario"><span class="sr-only">Buscar usuarios</span><b aria-hidden="true">âŒ•</b><input id="buscarUsuario" type="search" placeholder="Buscar por nombre, apellido o correo"></label>
+              <label><span class="sr-only">Perfil</span><select id="filtrarPerfil"><option value="">Todos los perfiles</option></select></label>
+              <label><span class="sr-only">Región</span><select id="filtrarRegion"><option value="">Todas las regiones</option></select></label>
+              <label><span class="sr-only">Estado</span><select id="filtrarEstado"><option value="">Todos los estados</option><option>Habilitado</option><option>Deshabilitado</option></select></label>
+              <button class="boton-secundario" type="reset">Restablecer</button>
+            </form>
+            <div class="contenedor-tabla">
+              <table>
+                <thead>
+                  <tr>
+                    <th><button type="button" data-orden="nombres">Nombre <span>â†•</span></button></th>
+                    <th><button type="button" data-orden="apellidos">Apellido <span>â†•</span></button></th>
+                    <th><button type="button" data-orden="correo">Correo <span>â†•</span></button></th>
+                    <th><button type="button" data-orden="region">Región <span>â†•</span></button></th>
+                    <th><button type="button" data-orden="perfil">Perfil <span>â†•</span></button></th>
+                    <th><button type="button" data-orden="estado">Estado <span>â†•</span></button></th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="cuerpoUsuarios"></tbody>
+              </table>
+            </div>
+            <footer class="paginacion-tabla">
+              <span id="rangoUsuarios">Mostrando 0 registros</span>
+              <div><button type="button" id="paginaAnterior">â€¹ Anterior</button><span id="paginasUsuarios"></span><button type="button" id="paginaSiguiente">Siguiente â€º</button></div>
+            </footer>
+          </section>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-admin" id="modalProyecto" hidden>
+    <button class="fondo-modal" type="button" data-cerrar-modal="modalProyecto" aria-label="Cerrar"></button>
+    <section role="dialog" aria-modal="true" aria-labelledby="tituloModalProyecto">
+      <header>
+        <div><span class="sobrelinea">PROYECTOS</span><h2 id="tituloModalProyecto">Crear proyecto</h2><p>Registre la intervención, su ubicación, documentación y beneficiarios.</p></div>
+        <button type="button" data-cerrar-modal="modalProyecto" aria-label="Cerrar">×</button>
+      </header>
+      <form id="formularioProyecto" class="formulario-proyecto">
+        <div class="acciones-superiores-proyecto">
+          <button class="boton-secundario" id="descargarFormatoProyecto" type="button">â†“ Descargar formato</button>
+          <button class="boton-secundario" id="generarMasivosProyecto" type="button">â–¦ Generar masivos</button>
+        </div>
+
+        <section class="seccion-proyecto">
+          <div class="titulo-seccion-proyecto"><span>01</span><div><h3>Datos generales</h3><p>Identificación y clasificación del proyecto.</p></div></div>
+          <div class="rejilla-proyecto rejilla-proyecto-general">
+            <label class="campo-proyecto campo-proyecto-ancho"><span>Nombre del proyecto</span><input name="nombre" required value="Red de Gas Natural - Sector 010101"></label>
+            <label class="campo-proyecto"><span>Tipo de proyecto</span><select name="tipoProyecto" required>
+              <option value="">-- Seleccione --</option>
+              <option>Masificación de gas natural</option>
+              <option>Vale FISE</option>
+              <option>Ahorro GNV</option>
+              <option>Electricidad al Toque</option>
+              <option>Fotovoltaico</option>
+              <option>MCTER</option>
+              <option>BonoGas</option>
+              <option>Eléctrico</option>
+            </select></label>
+            <label class="campo-proyecto"><span>Ubigeo</span><input id="ubigeoProyecto" name="ubigeo" value="010101" maxlength="6"></label>
+            <label class="campo-proyecto"><span>Departamento</span><select id="departamentoProyecto" name="departamento" required></select></label>
+            <label class="campo-proyecto"><span>Provincia</span><select id="provinciaProyecto" name="provincia"><option value="">-- Seleccione --</option></select></label>
+            <label class="campo-proyecto"><span>Distrito</span><select id="distritoProyecto" name="distrito"><option value="">-- Seleccione --</option></select></label>
+            <label class="campo-proyecto"><span>Zona</span><select name="zona"><option value="">-- Seleccione --</option><option>Urbana</option><option>Rural</option><option>Periurbana</option></select></label>
+            <label class="campo-proyecto"><span>Centro poblado</span><select name="centroPoblado"><option value="">-- Seleccione --</option><option>Chachapoyas</option><option>Pedro Castro Alva</option><option>El Molino</option><option>Otro centro poblado</option></select></label>
+            <label class="campo-proyecto"><span>Distribuidor</span><select name="distribuidor"><option value="">-- Seleccione --</option><option>Electro Oriente</option><option>Hidrandina</option><option>Enel Distribución Perú</option><option>Luz del Sur</option><option>SEAL</option></select></label>
+            <label class="campo-proyecto"><span>Código Único</span><input name="codigo" required value="FISE-2026-007"></label>
+            <label class="campo-proyecto"><span>SNIP</span><input name="snip" placeholder="Código SNIP"></label>
+            <label class="campo-proyecto"><span>Región Natural</span><select name="regionNatural"><option value="">-- Seleccione --</option><option>Costa</option><option>Sierra</option><option>Selva</option></select></label>
+            <label class="campo-proyecto"><span>Región por Altitud</span><select name="regionAltitud"><option value="">-- Seleccione --</option><option>Chala</option><option>Yunga</option><option>Quechua</option><option>Suni</option><option>Puna</option><option>Rupa-Rupa</option><option>Omagua</option></select></label>
+            <label class="campo-proyecto"><span>Tipo de RER</span><select name="tipoRer"><option value="">-- Seleccione --</option><option>Solar fotovoltaica</option><option>Eólica</option><option>Biomasa</option><option>Minihidráulica</option><option>No aplica</option></select></label>
+            <label class="campo-proyecto"><span>Estado del proyecto</span><select name="estadoProyecto"><option selected>En evaluación</option><option>Planificado</option><option>En ejecución</option><option>Suspendido</option><option>Finalizado</option></select></label>
+          </div>
+        </section>
+
+        <section class="seccion-proyecto">
+          <div class="titulo-seccion-proyecto"><span>02</span><div><h3>Documentación y multimedia</h3><p>Archivos de sustento y descripción de la intervención.</p></div></div>
+          <div class="barra-acciones-proyecto">
+            <button class="boton-accion-proyecto" id="anadirDocumentoProyecto" type="button">ï¼‹ Añadir doc.</button>
+            <button class="boton-accion-proyecto" id="verDocumentosProyecto" type="button">â–¤ Ver docs <b id="cantidadDocsProyecto">0</b></button>
+            <button class="boton-accion-proyecto" id="subirImagenProyecto" type="button">â†‘ Subir img.</button>
+            <button class="boton-accion-proyecto" id="verImagenesProyecto" type="button">â–§ Ver imgs <b id="cantidadImgsProyecto">0</b></button>
+            <input class="sr-only" id="archivoDocumentoProyecto" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx">
+            <input class="sr-only" id="archivoImagenProyecto" type="file" multiple accept="image/*">
+          </div>
+          <label class="campo-proyecto campo-proyecto-bloque"><span>Descripción</span><textarea name="descripcion" rows="3" placeholder="Detalle de la intervención..."></textarea></label>
+        </section>
+
+        <section class="seccion-proyecto">
+          <div class="titulo-seccion-proyecto"><span>03</span><div><h3>Coordenadas / Geometría</h3><p>Ubicación espacial asociada a la intervención.</p></div></div>
+          <div class="estado-geometria-proyecto">
+            <div><b id="textoGeometriaProyecto">Sin geometría registrada.</b><small id="detalleGeometriaProyecto">Abra el selector GIS para ubicar el proyecto.</small></div>
+            <button class="boton-secundario" id="abrirGisProyecto" type="button">âŒ– Abrir GIS</button>
+          </div>
+        </section>
+
+        <section class="seccion-proyecto seccion-beneficiarios-proyecto">
+          <div class="cabecera-beneficiarios-proyecto">
+            <div class="titulo-seccion-proyecto"><span>04</span><div><h3>Beneficiarios (<b id="contadorBeneficiariosProyecto">0</b>)</h3><p>Personas, empresas o instituciones vinculadas al proyecto.</p></div></div>
+            <div class="barra-acciones-proyecto">
+              <button class="boton-accion-proyecto" id="importarBeneficiariosProyecto" type="button">â†‘ Importar</button>
+              <button class="boton-accion-proyecto" id="exportarBeneficiariosProyecto" type="button">â†“ Exportar</button>
+              <button class="boton-principal boton-agregar-beneficiario" id="agregarBeneficiarioProyecto" type="button">ï¼‹ Agregar</button>
+              <button class="boton-accion-proyecto" id="descargarFormatoBeneficiarios" type="button">Descargar formato</button>
+              <button class="boton-accion-proyecto" id="subirExcelBeneficiarios" type="button">Subir Excel</button>
+              <input class="sr-only" id="archivoBeneficiariosProyecto" type="file" accept=".csv,.xls,.xlsx">
+            </div>
+          </div>
+          <div class="lista-beneficiarios-proyecto" id="listaBeneficiariosProyecto"></div>
+        </section>
+
+        <footer class="pie-formulario-proyecto">
+          <button class="boton-secundario" type="button" data-cerrar-modal="modalProyecto">Cancelar</button>
+          <button class="boton-principal" type="submit">Guardar proyecto</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-admin" id="modalExportarAdmin" hidden>
+    <button class="fondo-modal" type="button" data-cerrar-modal="modalExportarAdmin" aria-label="Cerrar"></button>
+    <section role="dialog" aria-modal="true" aria-labelledby="tituloExportarAdmin">
+      <header><div><span class="sobrelinea">EXPORTACIÓN</span><h2 id="tituloExportarAdmin">Reporte SATCONTROL</h2><p>Seleccione el formato para los registros visibles.</p></div><button type="button" data-cerrar-modal="modalExportarAdmin">×</button></header>
+      <div class="formatos-exportacion">
+        <button class="activo" type="button" data-formato="pdf"><b>PDF</b><small>Informe listo para imprimir</small></button>
+        <button type="button" data-formato="csv"><b>CSV</b><small>Datos tabulares compatibles</small></button>
+        <button type="button" data-formato="xlsx"><b>XLSX</b><small>Libro compatible con Excel</small></button>
+      </div>
+      <div class="alcance-exportacion"><span>Alcance</span><b id="alcanceExportacion">Todos los registros filtrados</b><span>Registros</span><strong id="cantidadExportacion">0</strong></div>
+      <footer><button class="boton-secundario" type="button" data-cerrar-modal="modalExportarAdmin">Cancelar</button><button class="boton-principal" id="generarExportacion" type="button">Generar reporte</button></footer>
+    </section>
+  </div>
+
+  <div class="modal-admin" id="modalHerramientaModulo" hidden>
+    <button class="fondo-modal" type="button" data-cerrar-modal="modalHerramientaModulo" aria-label="Cerrar"></button>
+    <section class="modal-herramienta-modulo" role="dialog" aria-modal="true" aria-labelledby="tituloHerramientaModuloModal">
+      <header>
+        <div><span class="sobrelinea" id="moduloHerramientaModal">MÓDULO</span><h2 id="tituloHerramientaModuloModal">Herramienta especializada</h2><p id="descripcionHerramientaModuloModal"></p></div>
+        <button type="button" data-cerrar-modal="modalHerramientaModulo" aria-label="Cerrar">×</button>
+      </header>
+      <div class="contenido-herramienta-modulo" id="contenidoHerramientaModulo">
+        <span class="estado-maqueta-herramienta">Demostración operativa</span>
+        <h3>Herramienta del módulo</h3>
+        <p>Seleccione una herramienta para iniciar su flujo dentro de Administración.</p>
+      </div>
+      <footer id="accionesHerramientaModulo"><button class="boton-secundario" type="button" data-cerrar-modal="modalHerramientaModulo">Cerrar</button><button class="boton-principal" id="ejecutarHerramientaAdmin" type="button">Ejecutar demostración</button></footer>
+    </section>
+  </div>
+
+  <div class="modal-admin modal-portal-herramienta" id="modalPortalHerramienta" hidden>
+    <button class="fondo-modal" type="button" data-cerrar-portal-herramienta aria-label="Cerrar"></button>
+    <section role="dialog" aria-modal="true" aria-labelledby="tituloPortalHerramienta">
+      <header class="cabecera-portal-herramienta">
+        <div>
+          <span class="sobrelinea" id="moduloPortalHerramienta">MÓDULO</span>
+          <h2 id="tituloPortalHerramienta">Herramienta</h2>
+        </div>
+        <button type="button" data-cerrar-portal-herramienta aria-label="Cerrar">×</button>
+      </header>
+      <div class="cargando-portal-herramienta" id="cargandoPortalHerramienta">
+        <span></span>
+        <b>Preparando herramientaâ€¦</b>
+        <small>Se abrirá dentro de SATCONTROL Administración.</small>
+      </div>
+      <iframe id="iframePortalHerramienta" title="Herramienta del módulo" loading="eager"></iframe>
+    </section>
+  </div>
+
+  <div class="modal-admin" id="modalEliminarProyecto" hidden>
+    <button class="fondo-modal" type="button" data-cerrar-modal="modalEliminarProyecto" aria-label="Cerrar"></button>
+    <section class="modal-eliminar-proyecto" role="dialog" aria-modal="true" aria-labelledby="tituloEliminarProyecto">
+      <header>
+        <div><span class="sobrelinea">ADMINISTRACIÓN</span><h2 id="tituloEliminarProyecto">Eliminar proyecto</h2><p>Escribe el código del proyecto que deseas eliminar.</p></div>
+        <button type="button" data-cerrar-modal="modalEliminarProyecto" aria-label="Cerrar">×</button>
+      </header>
+      <form id="formularioEliminarProyecto">
+        <div class="alerta-eliminacion-proyecto"><strong>Esta acción es irreversible.</strong><span>El proyecto se retirará del listado y de los filtros de Administración.</span></div>
+        <label class="campo-proyecto"><span>Código</span><input id="codigoEliminarProyecto" name="codigo" required placeholder="Ej. proy-026001" autocomplete="off"></label>
+        <div class="vista-previa-eliminacion" id="vistaPreviaEliminacion" hidden></div>
+        <footer>
+          <button class="boton-secundario" type="button" data-cerrar-modal="modalEliminarProyecto">Cancelar</button>
+          <button class="boton-peligro" type="submit">Eliminar definitivamente</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+
+  <div class="notificacion-admin" id="notificacionAdmin" role="status" aria-live="polite" hidden></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="../../scripts_generales.js?v=20260813-15"></script>
+  <script src="admin.js?v=20260729-9"></script>
+  <script src="../../asistente_ia.js?v=20260813-3"></script>
+</body>
+</html>
