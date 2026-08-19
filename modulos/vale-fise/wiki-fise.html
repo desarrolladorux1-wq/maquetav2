@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Wiki FISE · SIFISE</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f7f7f7;color:#333;font-family:Arial,Helvetica,sans-serif}.wiki-top{height:76px;background:#5385c2;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 34px;box-shadow:0 2px 6px #0002}.wiki-logo{font-size:42px;font-weight:300;letter-spacing:-3px}.wiki-logo b{font-weight:300;letter-spacing:-2px}.wiki-top-actions{display:flex;gap:24px;font-size:28px}.wiki-shell{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 132px)}.wiki-nav{padding:38px 28px;background:#fafafa;border-right:1px solid #e4e4e4}.wiki-nav h2{margin:0 0 18px;font-size:27px;font-weight:400}.wiki-tree{border-top:1px solid #ddd;padding-top:18px;color:#3972b9;font-size:18px;line-height:1.7}.wiki-tree details{margin:4px 0}.wiki-tree summary{cursor:pointer}.wiki-tree a{display:block;color:#3972b9;text-decoration:none;padding-left:24px;border-radius:5px}.wiki-tree a:hover,.wiki-tree a.active{background:#eaf1fa}.wiki-content{padding:32px}.wiki-toolbar{display:flex;align-items:center;justify-content:space-between;background:#f3f3f3;border-radius:7px;padding:15px 20px;color:#6f6f6f}.wiki-back{border:0;border-radius:8px;background:#315f99;color:#fff;padding:11px 17px;font-weight:700;cursor:pointer}.wiki-card{margin-top:28px;background:#fff;border-radius:7px;padding:34px;box-shadow:0 3px 10px #0002;min-height:360px}.wiki-card h1{margin:0;font-size:44px;font-weight:400}.wiki-meta{margin:18px 0 32px;color:#6e6e6e;font-size:16px}.wiki-meta a{color:#3972b9}.wiki-line{border-top:1px solid #e1e1e1;margin:28px 0}.wiki-welcome{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.wiki-topic{border:1px solid #dce5ef;border-radius:10px;padding:18px;background:#f9fbfd}.wiki-topic h3{margin:0 0 8px;color:#315f99}.wiki-topic p{margin:0;color:#667;line-height:1.45}.wiki-footer{height:56px;background:#5385c2;color:#fff;display:flex;align-items:center;justify-content:center;gap:18px}.wiki-search{display:none;position:fixed;right:24px;top:82px;width:320px;padding:14px;background:#fff;border-radius:9px;box-shadow:0 8px 28px #0004}.wiki-search.open{display:block}.wiki-search input{width:100%;padding:11px;border:1px solid #b9c8da;border-radius:7px}@media(max-width:800px){.wiki-shell{grid-template-columns:1fr}.wiki-nav{display:none}.wiki-content{padding:16px}.wiki-welcome{grid-template-columns:1fr}.wiki-logo{font-size:31px}}
+  </style>
+</head>
+<body>
+  <header class="wiki-top"><div class="wiki-logo">✣<b>WIKI</b></div><div class="wiki-top-actions"><button id="wikiSearchBtn" aria-label="Buscar" style="all:unset;cursor:pointer">⌕</button><span>☰</span></div></header>
+  <div class="wiki-search" id="wikiSearch"><input id="wikiSearchInput" placeholder="Buscar en Wiki FISE"></div>
+  <main class="wiki-shell">
+    <aside class="wiki-nav"><h2>Navegación</h2><nav class="wiki-tree"><a href="#" class="active" data-topic="SIFISE">• Inicio</a><details open><summary>SIFISE</summary><details open style="padding-left:18px"><summary>Guía de Usuario</summary><a href="#" data-topic="Comedores PCA y QW">Comedores PCA y QW</a><a href="#" data-topic="Empresa Eléctrica">Empresa Eléctrica</a><a href="#" data-topic="Osinergmin">Osinergmin</a><a href="#" data-topic="Política FISE">Política</a><a href="#" data-topic="Recaudadoras">Recaudadoras</a></details></details><details open><summary>1. GNR</summary><a href="#" data-topic="Guía GNR">Guía de Usuario</a></details><details><summary>2. GNV</summary><a href="#" data-topic="Programa Ahorro GNV">Programa Ahorro GNV</a></details><details><summary>3. FISEFORMS</summary><a href="#" data-topic="FISEFORMS">Formularios y evidencias</a></details><details><summary>9. Tips</summary><a href="#" data-topic="Preguntas frecuentes">Preguntas frecuentes</a></details></nav></aside>
+    <section class="wiki-content"><div class="wiki-toolbar"><span>⌂ &nbsp;/&nbsp; <b id="wikiBreadcrumb">SIFISE</b></span><button class="wiki-back" id="wikiBackVale">← Volver a Vale FISE</button></div><article class="wiki-card"><h1 id="wikiTitle">SIFISE</h1><p class="wiki-meta">Última modificación por <a href="#">FISE FONDO</a> el 24/05/2023, 14:44</p><div class="wiki-line"></div><div class="wiki-welcome" id="wikiTopics"><section class="wiki-topic"><h3>Guías de usuario</h3><p>Procedimientos y orientación para operar los servicios y programas FISE.</p></section><section class="wiki-topic"><h3>Normativa</h3><p>Documentación institucional, políticas, resoluciones y criterios vigentes.</p></section><section class="wiki-topic"><h3>Soporte</h3><p>Preguntas frecuentes, recomendaciones y canales de asistencia.</p></section></div><div class="wiki-line"></div><p style="color:#707070">Etiquetas: <span id="wikiTag">SIFISE · documentación</span></p></article></section>
+  </main>
+  <footer class="wiki-footer"><span>FISE MINEM</span><span>1.0.0</span></footer>
+  <script>
+  (function(){
+    try{if(sessionStorage.getItem('vale_fise_wiki_autenticada')!=='1'){location.href='valefise.html';return;}}catch(e){}
+    document.getElementById('wikiBackVale').onclick=function(){
+      if(window.parent!==window){window.parent.postMessage({type:'wiki-fise:volver'},location.origin);return;}
+      location.href='valefise.html';
+    };
+    document.getElementById('wikiSearchBtn').onclick=function(){document.getElementById('wikiSearch').classList.toggle('open');document.getElementById('wikiSearchInput').focus();};
+    document.querySelectorAll('[data-topic]').forEach(function(link){link.onclick=function(e){e.preventDefault();var topic=link.dataset.topic;document.getElementById('wikiTitle').textContent=topic;document.getElementById('wikiBreadcrumb').textContent=topic;document.getElementById('wikiTag').textContent=topic+' · Wiki FISE';document.querySelectorAll('[data-topic]').forEach(function(x){x.classList.toggle('active',x===link);});};});
+    document.getElementById('wikiSearchInput').oninput=function(){var q=this.value.toLowerCase();document.querySelectorAll('[data-topic]').forEach(function(x){x.style.display=!q||x.dataset.topic.toLowerCase().includes(q)?'block':'none';});};
+  })();
+  </script>
+</body>
+</html>
