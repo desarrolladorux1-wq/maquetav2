@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0a1224">
+  <title>Mi Ahorro GNV | FISE</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="cliente.css?v=8">
+</head>
+<body>
+  <main class="acceso-cliente" id="vistaAcceso">
+    <section class="tarjeta-acceso">
+      <div class="marca-acceso"><img src="../../../img/logo_fise.png" alt="FISE"><span>Programa Ahorro GNV</span></div>
+      <form id="formularioCliente" novalidate>
+        <header><small>PORTAL DE BENEFICIARIOS</small><h1>Bienvenido</h1><p>Consulta tus pagos y encuentra talleres de conversión cercanos.</p></header>
+        <label><span>Usuario</span><div><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><input id="usuarioCliente" autocomplete="username" placeholder="Ingresa tu usuario" value="cliente"></div></label>
+        <label><span>Contraseña</span><div><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="claveCliente" type="password" autocomplete="current-password" placeholder="Ingresa tu contraseña" value="123456"><button id="verClaveCliente" type="button" aria-label="Mostrar contraseña">◉</button></div></label>
+        <p class="error-acceso" id="errorAcceso" role="alert"></p>
+        <button class="ingresar-cliente" type="submit">Ingresar</button>
+        <a href="mailto:soporte@satcontrol.pe">¿Necesitas ayuda para ingresar?</a>
+      </form>
+    </section>
+  </main>
+
+  <div class="portal-cliente" id="portalCliente" hidden>
+    <header class="cabecera-cliente"><div><span><strong>Mi Ahorro GNV</strong><small>Hola, Carlos Mendoza</small></span></div><button id="cerrarSesionCliente" type="button">Salir</button></header>
+    <main class="contenido-cliente">
+      <section class="vista-cliente activa" id="inicioCliente">
+        <div class="saludo-cliente"><div><small>BENEFICIARIO ACTIVO</small><h1>Tu conversión GNV</h1><p>Consulta el estado de tu financiamiento y tus próximos pagos.</p></div><span>Al día</span></div>
+        <section class="mapa-inicio-cliente">
+          <header><div><small>RED AHORRO GNV</small><h2>Talleres cerca de ti</h2><p>Tu ubicación referencial y talleres de conversión autorizados.</p></div><button data-ir="talleresCliente" type="button">Ver todos los talleres</button></header>
+          <div class="cuerpo-mapa-inicio">
+            <div id="mapaInicioCliente" aria-label="Mapa inicial con ubicación del beneficiario y talleres"></div>
+            <aside class="slider-talleres-inicio">
+              <header><div><small>MÁS CERCANOS</small><h3>Talleres disponibles</h3></div><span id="contadorSliderTalleres">5</span></header>
+              <div id="listaTalleresInicio"></div>
+              <footer><button id="tallerAnteriorCliente" type="button" aria-label="Taller anterior">‹</button><span>Desliza para explorar</span><button id="tallerSiguienteCliente" type="button" aria-label="Taller siguiente">›</button></footer>
+            </aside>
+          </div>
+          <div class="leyenda-mapa-cliente"><span><i class="ubicacion"></i>Tu ubicación</span><span><i class="taller"></i>Taller autorizado</span></div>
+        </section>
+        <div class="resumen-cliente"><article><span>Saldo pendiente</span><strong>S/ 2,310.00</strong><small>6 cuotas restantes</small></article><article><span>Próximo pago</span><strong>S/ 385.00</strong><small>15 setiembre 2026</small></article><article><span>Ahorro estimado</span><strong>S/ 186.00</strong><small>Este mes usando GNV</small></article></div>
+        <section class="tarjeta-cliente progreso-conversion"><header><div><small>EXPEDIENTE GNV-000001</small><h2>Conversión completada</h2></div><b>100%</b></header><div class="progreso"><i></i></div><ol><li class="listo">Solicitud</li><li class="listo">Evaluación</li><li class="listo">Conversión</li><li class="listo">Certificación</li></ol></section>
+        <section class="tarjeta-cliente pago-proximo"><div><span>Próxima cuota</span><strong>S/ 385.00</strong><small>Vence el 15/09/2026</small></div><button data-ir="pagosCliente" type="button">Ver mis pagos</button></section>
+      </section>
+
+      <section class="vista-cliente" id="pagosCliente" hidden>
+        <div class="titulo-vista"><small>FINANCIAMIENTO</small><h1>Mis pagos</h1><p>Historial y cronograma de cuotas de tu conversión.</p></div>
+        <div class="resumen-pagos"><article><span>Monto financiado</span><strong>S/ 4,620.00</strong></article><article><span>Pagado</span><strong>S/ 2,310.00</strong></article><article><span>Pendiente</span><strong>S/ 2,310.00</strong></article></div>
+        <section class="tarjeta-cliente cronograma"><header><h2>Cronograma de cuotas</h2><span>12 cuotas</span></header><div id="listaPagosCliente"></div></section>
+      </section>
+
+      <section class="vista-cliente" id="talleresCliente" hidden>
+        <div class="titulo-vista"><small>MI RED AUTORIZADA</small><h1>Talleres guardados</h1><p>Consulta tus talleres y grifos GNV guardados.</p></div>
+        <div class="busqueda-talleres"><input id="buscarTallerCliente" placeholder="Buscar taller o distrito"><select id="distritoTallerCliente"><option value="">Todos los distritos</option><option>San Juan de Lurigancho</option><option>Los Olivos</option><option>Independencia</option><option>Comas</option></select></div>
+        <div id="mapaCliente" aria-label="Mapa de talleres Ahorro GNV"></div>
+        <section class="tarjeta-cliente lista-talleres"><header><h2>Mis talleres guardados</h2><span id="totalTalleresCliente">0 guardados</span></header><div id="tarjetasTalleresCliente"></div></section>
+      </section>
+
+      <section class="vista-cliente" id="perfilCliente" hidden><div class="titulo-vista"><small>MI CUENTA</small><h1>Perfil</h1></div><section class="tarjeta-cliente perfil-datos"><div class="avatar">CM</div><h2>Carlos Mendoza Rojas</h2><p>DNI 42180001 · Placa V8A-101</p><dl><div><dt>Teléfono</dt><dd>987 654 321</dd></div><div><dt>Correo</dt><dd>carlos.mendoza@email.com</dd></div><div><dt>Taller asignado</dt><dd>TecnoGas Arequipa</dd></div><div><dt>Estado</dt><dd>Beneficiario activo</dd></div></dl></section></section>
+    </main>
+    <nav class="navegacion-cliente" aria-label="Navegación principal">
+      <div class="marca-menu-cliente"><span><img src="../../../img/logo_fise.png" alt=""></span><div><strong>Mi Ahorro GNV</strong><small>Portal del cliente</small></div></div>
+      <p class="etiqueta-menu-cliente">MENÚ PRINCIPAL</p>
+      <button class="activo" data-vista="inicioCliente"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3V11Z"/></svg><span>Inicio</span></button><button data-vista="pagosCliente"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg><span>Pagos</span></button><button data-vista="talleresCliente"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Talleres</span></button><button data-vista="perfilCliente"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Perfil</span></button>
+      <div class="usuario-menu-cliente"><i>CM</i><span><strong>Carlos Mendoza</strong><small>Beneficiario activo</small></span></div>
+    </nav>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="cliente.js?v=5"></script>
+</body>
+</html>
