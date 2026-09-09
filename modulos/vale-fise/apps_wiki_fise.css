@@ -1,0 +1,21 @@
+.vale-apps-modal[hidden],.wiki-fise-vista[hidden]{display:none!important}
+.vale-apps-modal{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:24px;background:#071126d9;backdrop-filter:blur(5px)}
+.vale-apps-dialog{width:min(1180px,92vw);max-height:90vh;overflow:auto;border:1px solid #50628e;border-radius:22px;background:#171f43;color:#fff;box-shadow:0 28px 80px #020714b3}
+.vale-apps-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:16px;padding:20px 26px;background:#171f43;border-bottom:1px solid #394873}
+.vale-apps-escudo{display:grid;place-items:center;width:54px;height:54px;border-radius:15px;background:linear-gradient(145deg,#65c8ed,#6073ef)}
+.vale-apps-escudo svg{width:32px;fill:none;stroke:#0c1834;stroke-width:2.2}
+.vale-apps-header h2{margin:0;font-size:30px;line-height:1.1}.vale-apps-header p{margin:6px 0 0;color:#a9bdf4;font-size:15px}
+.vale-apps-cerrar{margin-left:auto;width:44px;height:44px;border:1px solid #60719d;border-radius:50%;background:transparent;color:#cbd6fa;font-size:28px;cursor:pointer}
+.vale-apps-body{padding:22px 26px 28px}.vale-apps-body h3{margin:0 0 6px;font-size:21px}.vale-apps-intro{margin:0 0 18px;color:#a9bdf4;font-size:14px}
+.vale-apps-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.vale-apps-grid-resumida{grid-template-columns:repeat(3,minmax(0,1fr))}
+.vale-app-card{display:flex;min-height:220px;flex-direction:column;align-items:flex-start;padding:19px;border:1px solid #52638e;border-radius:18px;background:#121a38;color:#fff;text-align:left}
+.vale-app-card.actual{border-color:#62dc78}.vale-app-icon{display:grid;place-items:center;min-width:48px;height:48px;padding:0 9px;border-radius:14px;background:#65cb59;font-size:17px}.vale-app-card.wiki .vale-app-icon{background:#6490d3}
+.vale-app-card strong{margin-top:14px;font-size:17px}.vale-app-card p{margin:6px 0;color:#a9bdf4;font-size:13px;line-height:1.35}.vale-app-status{margin-top:auto;padding-top:12px;color:#75ec85;font-size:13px;font-weight:700}
+.vale-app-action{align-self:flex-end;margin-top:14px;border:0;border-radius:11px;background:#596fec;color:#fff;padding:10px 15px;font:700 13px inherit;cursor:pointer}.vale-app-action:hover{filter:brightness(1.1)}
+.vale-solicitar{display:flex;justify-content:flex-end;margin-top:18px}.vale-solicitar button{border:1px solid #7181ad;border-radius:11px;background:#222d54;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer}
+.vale-auth-dialog{width:min(900px,92vw)}.vale-auth-body{padding:24px 28px 28px}.vale-auth-body h3{margin:0 0 20px;font-size:23px}.vale-auth-form{display:grid;grid-template-columns:1fr 1fr;gap:16px}.vale-auth-form label:first-of-type{grid-column:1/-1}.vale-auth-form label{display:grid;gap:7px;font-size:14px;font-weight:700}.vale-auth-form input{width:100%;border:1px solid #25416d;border-radius:12px;background:#0b132d;color:#fff;padding:13px 15px;font:600 14px inherit;outline:none}.vale-auth-form input:focus{border-color:#48c4ec;box-shadow:0 0 0 4px #48c4ec24}.vale-auth-actions{grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:6px}.vale-auth-error{margin-right:auto;color:#ffadad}.vale-auth-actions button{border:0;border-radius:11px;padding:11px 17px;font:700 14px inherit;cursor:pointer}.vale-auth-volver{background:#29345c;color:#fff}.vale-auth-submit{background:#596fec;color:#fff}
+.wiki-fise-vista{position:fixed;inset:0;z-index:12000;background:#fff}.wiki-fise-vista iframe{width:100%;height:100%;border:0}.wiki-fise-cargando{position:absolute;inset:0;display:grid;place-items:center;background:#171f43;color:#fff;font-size:22px}.wiki-fise-vista.cargada .wiki-fise-cargando{display:none}
+body.vale-apps-bloqueado{overflow:hidden}
+@media(max-width:1100px){.vale-apps-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.vale-apps-modal{padding:8px}.vale-apps-dialog{max-height:98vh;border-radius:18px}.vale-apps-header,.vale-apps-body,.vale-auth-body{padding:22px}.vale-apps-header p{font-size:15px}.vale-apps-grid,.vale-auth-form{grid-template-columns:1fr}.vale-auth-form label:first-of-type{grid-column:auto}.vale-auth-actions{grid-column:auto;flex-wrap:wrap}.vale-app-card{min-height:240px}}

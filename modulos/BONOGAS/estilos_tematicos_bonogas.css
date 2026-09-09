@@ -1,0 +1,100 @@
+.leyenda-estados-pago{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px;padding:3px 0;color:#63748b;font-size:.54rem;font-weight:800}
+.leyenda-estados-pago span{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.leyenda-estados-pago i{width:10px;height:10px;flex:0 0 auto;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(42,62,86,.2)}
+.leyenda-estados-pago .activo{background:#3d8dde}
+.leyenda-estados-pago .seguimiento{background:#e7ad28}
+.leyenda-estados-pago .sin-pago{background:#dc5a5a}
+.leyenda-estados-pago .pagado{background:#45ae75}
+body.pagina-bonogas .leyenda-estados-pago{color:#c5d4e9}
+.leyenda-tematica-flotante{position:absolute;z-index:610;right:13px;bottom:51px;min-width:190px;padding:10px 12px;border:1px solid rgba(180,203,220,.9);border-radius:12px;color:#63748b;background:rgba(255,255,255,.97);box-shadow:0 10px 26px rgba(19,43,70,.22);backdrop-filter:blur(8px)}
+.leyenda-tematica-flotante[hidden]{display:none!important}
+body.pagina-bonogas .leyenda-tematica-flotante{border-color:rgba(113,145,193,.5);color:#c5d4e9;background:linear-gradient(150deg,rgba(23,37,64,.98),rgba(10,22,43,.98));box-shadow:0 12px 30px rgba(2,8,22,.48)}
+@media(max-width:680px){.leyenda-tematica-flotante{right:10px;bottom:50px;min-width:180px}}
+
+/* Detalles creados dinámicamente: el tema FISE siempre mantiene contraste claro. */
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario{color:#344760!important;border-color:#d5e2eb!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario :is(h3,h4,b,strong){color:#173f75!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario :is(small,span,p,.texto-evolucion-instalador){color:#6f8197!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario :is(.resumen-instalador-mapa article,.detalle-grid div,.lista-seleccion article){border-color:#dbe5ed!important;background:#f7fafc!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario :is(.resumen-instalador-mapa,.detalle-grid){padding:6px;border-radius:13px;background:#eef5f9!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario .resumen-instalador-mapa .pendiente{border-color:#edbd94!important;background:#fff5eb!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario .resumen-instalador-mapa .pendiente strong{color:#c66a18!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario .bloque-detalle h4{border-color:#dce5ed!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario .cabecera-proyecto-hospital{border-color:#edb6cd!important;background:#fff2f7!important}
+html[data-tema="paulet"] body.pagina-bonogas .detalle-beneficiario .cabecera-proyecto-hospital em{color:#a42c5b!important;background:#f8dce8!important}
+html[data-tema="paulet"] body.pagina-bonogas .trazabilidad-mapa{color:#344760!important;border-color:#cbdce8!important;background:rgba(255,255,255,.97)!important;box-shadow:0 12px 30px rgba(31,73,106,.18)!important}
+html[data-tema="paulet"] body.pagina-bonogas .trazabilidad-mapa header :is(strong,p){color:#173f75!important}
+html[data-tema="paulet"] body.pagina-bonogas .trazabilidad-mapa .fase-trazabilidad :is(span,small){color:#60748c!important}
+html[data-tema="paulet"] body.pagina-bonogas .trazabilidad-mapa .fase-trazabilidad:not(:last-child)::after{background:#b9d7e7!important}
+
+/* Ranking Art. 27: Estilos FISE debe ser siempre una superficie clara.
+   El ranking tenía reglas oscuras específicas con !important que anulaban el
+   tema institucional al abrir el modal. */
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas{color:#243b55!important;background:#f4f8fb!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .modal-cuerpo{color:#243b55!important;background:#f4f8fb!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .filtros-ranking-art27,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .fuente-ranking-art27{color:#526b83!important;border-color:#d2e0ea!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .filtros-ranking-art27 label,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .filtros-ranking-art27 p{color:#60758d!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .filtros-ranking-art27 select{color:#29435f!important;border-color:#c6d8e6!important;background:#f9fbfd!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .kpis-modal article,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .lista-ranking,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .detalle-ranking{color:#243b55!important;border-color:#d2e0ea!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .kpis-modal span,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .empresa-ranking div small,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .resumen-idegnr :is(span,small),
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .tabla-indicadores-ranking .fila small{color:#71849a!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .kpis-modal strong,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .empresa-ranking div b,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .detalle-ranking h3,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .cabecera-detalle-ranking h3,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .resumen-idegnr strong{color:#173f75!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .acciones-ranking{color:#29435f!important;border-color:#d2e0ea!important;background:#f2f7fa!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .acciones-ranking button{color:#2d5f86!important;border-color:#c7d9e7!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .empresa-ranking{color:#243b55!important;border-color:#dbe6ee!important;background:#f8fbfd!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .empresa-ranking.activa{border-color:#72bdd8!important;background:#eaf7fb!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .empresa-ranking>strong{color:#247651!important;background:#def3e8!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .empresa-ranking.no-elegible>strong{color:#8a5428!important;background:#f6dfca!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .cabecera-detalle-ranking small{color:#397e9e!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .estado-elegibilidad.elegible{color:#237048!important;border-color:#b8dfc9!important;background:#e5f5eb!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .estado-elegibilidad.no-elegible{color:#8a5428!important;border-color:#ead0af!important;background:#fff4e7!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .resumen-idegnr article{color:#243b55!important;border-color:#dbe6ee!important;background:#f7fafc!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .tabla-indicadores-ranking{border-color:#d7e3ec!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .tabla-indicadores-ranking .fila{color:#29435f!important;border-color:#e0e8ef!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .tabla-indicadores-ranking .cabecera{color:#fff!important;background:#2d5fa6!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .tabla-indicadores-ranking .cabecera b{color:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .tabla-indicadores-ranking .total,
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .tabla-indicadores-ranking .total :is(span,small,strong,b){color:#173f75!important;background:#eaf4f8!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .recomendacion-ranking{color:#237048!important;border-color:#b8dfc9!important;background:#effaf3!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalRankingEmpresas .recomendacion-ranking.observada{color:#8a5428!important;border-color:#ead0af!important;background:#fff5e9!important}
+
+/* Ejecución PAC: evita que las reglas del modo oscuro dejen fondos o textos
+   oscuros dentro del modal institucional claro. */
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos{color:#243b55!important;background:#f7fafc!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .modal-cuerpo{color:#243b55!important;background:#f7fafc!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .filtros-pac-proyectos{color:#425b73!important;border-color:#d4e1eb!important;background:#f1f6fa!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .filtros-pac-proyectos label{color:#60748c!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .filtros-pac-proyectos label>span{color:#526b83!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .filtros-pac-proyectos select{color:#29435f!important;border-color:#c8d9e7!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .filtros-pac-proyectos button{color:#fff!important;border-color:#2d5fa6!important;background:#2d5fa6!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .kpis-modal article{color:#243b55!important;border-color:#d5e2eb!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .kpis-modal span{color:#6f8197!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .kpis-modal strong{color:#173f75!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado{background:transparent!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado>div{color:#243b55!important;border-color:#d5e2eb!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado h3{color:#173f75!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado section{background:transparent!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado article{color:#243b55!important;border-color:#dbe6ee!important;background:#f8fbfd!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado article div b,
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado article strong{color:#173f75!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado article div span,
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado article strong small{color:#6f8197!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .resumen-pac-agrupado article>i{background:#dce8ef!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .tabla-modal,
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .tabla-modal table{color:#29435f!important;border-color:#d4e1eb!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .tabla-modal th{color:#244878!important;border-color:#dbe6ee!important;background:#eaf4f8!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .tabla-modal td,
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .tabla-modal td b,
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .tabla-modal td strong{color:#29435f!important;border-color:#e1e9ef!important;background:#fff!important}
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .nota-pac-proyectos,
+html[data-tema="paulet"] body.pagina-bonogas #modalPacProyectos .paginacion-pac-proyectos span{color:#60748c!important}
