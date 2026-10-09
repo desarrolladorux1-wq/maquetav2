@@ -27,6 +27,9 @@ body.pagina-electricidad-al-toque .campo-busqueda-mcter svg,
 body.pagina-electricidad-al-toque .campo-busqueda-mcter :is(circle, path) { background: transparent !important; box-shadow: none !important; }
 body.pagina-electricidad-al-toque .busqueda-persona-eat { background: transparent !important; box-shadow: none !important; }
 
+/* Ficha de observaciones fotovoltaicas: paleta institucional Paulet + FISE. */
+body.pagina-fotovoltaico .ficha-lectura-observaciones{color:#f4f7ff!important}body.pagina-fotovoltaico .ficha-lectura-observaciones section{border-color:#355077!important;background:#142850!important}body.pagina-fotovoltaico .ficha-lectura-observaciones h3{color:#62d79c!important}body.pagina-fotovoltaico .campos-lectura-observacion article{border-color:#355077!important;background:#101a36!important}body.pagina-fotovoltaico .campos-lectura-observacion small{color:#a9bde0!important}body.pagina-fotovoltaico .campos-lectura-observacion strong{color:#f4f7ff!important;background:#0d1931!important}body.pagina-fotovoltaico .campos-lectura-observacion span{color:#8ee8b8!important;border-color:#56b98a!important;background:rgba(51,154,105,.16)!important}body.pagina-fotovoltaico .campos-lectura-observacion p{color:#d7e6ff!important;border-color:#3f7180!important;background:#17284a!important}body.pagina-fotovoltaico .registro-lectura-observacion article{border-left-color:#62b7df!important;background:#101a36!important}body.pagina-fotovoltaico .registro-lectura-observacion strong{color:#8ee8b8!important}body.pagina-fotovoltaico .registro-lectura-observacion time{color:#a9bde0!important}body.pagina-fotovoltaico .registro-lectura-observacion p{color:#d7e6ff!important}
+
 :root,
 body:not(.pagina-acceso) {
   color-scheme: dark;
