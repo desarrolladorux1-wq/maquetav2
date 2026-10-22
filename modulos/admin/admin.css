@@ -11,6 +11,28 @@
   --admin-sombra: 0 14px 34px rgba(38, 61, 92, .1);
 }
 
+/* Administración: las acciones globales comparten una sola fila del encabezado. */
+body .cabecera-satcontrol-global .cabecera-satcontrol-acciones {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  white-space: nowrap;
+}
+body .cabecera-satcontrol-global .selector-apariencia-cabecera {
+  position: static !important;
+  display: flex !important;
+  flex: 0 0 42px !important;
+  align-self: center !important;
+  order: initial !important;
+  transform: none !important;
+}
+body .cabecera-satcontrol-global .selector-apariencia-cabecera .boton-apariencia-cabecera {
+  position: static;
+  margin: 0;
+}
+
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 button, input, select { font: inherit; }
