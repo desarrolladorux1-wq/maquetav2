@@ -3591,6 +3591,27 @@ body:not(.pagina-acceso) .mapa-panel-gnv .leyenda-mapa-grid-gnv span { color: #d
 body:not(.pagina-acceso) .mapa-panel-gnv .item-principal-leyenda-gnv b { color: #f3f7ff !important; }
 body:not(.pagina-acceso) .mapa-panel-gnv .item-principal-leyenda-gnv small,
 body:not(.pagina-acceso) .mapa-panel-gnv .subestados-leyenda-gnv span { color: #bcd2f4 !important; }
+body:not(.pagina-acceso) .mapa-panel-gnv .subestados-grifos-gnv span {
+  border-color: rgba(126, 169, 235, .36) !important;
+  background: #1a2d4c !important;
+}
+body:not(.pagina-acceso) .mapa-panel-gnv .subestados-grifos-gnv span b { color: #f4f8ff !important; }
+body:not(.pagina-acceso) .mapa-panel-gnv .subestados-grifos-gnv span small { color: #a9c6f0 !important; }
+body:not(.pagina-acceso) .mapa-panel-gnv .buscador-geografico-gnv { border-color: rgba(126,169,235,.48) !important; background: rgba(15,30,57,.97) !important; }
+body:not(.pagina-acceso) .mapa-panel-gnv .buscador-geografico-gnv label span { color: #a9c6f0 !important; }
+body:not(.pagina-acceso) .mapa-panel-gnv .buscador-geografico-gnv input { color: #f4f8ff !important; border-color: #405d88 !important; background: #162846 !important; }
+body:not(.pagina-acceso) .mapa-panel-gnv .buscador-geografico-gnv button:last-child { color: #d8e8ff !important; border-color: #405d88 !important; background: #1e355b !important; }
+body:not(.pagina-acceso) .tarjeta-ahorro-estimado-gnv>div { border-color: #405d88 !important; background: #17284a !important; }
+body:not(.pagina-acceso) .tarjeta-ahorro-estimado-gnv strong { color: #f5f8ff !important; }
+body:not(.pagina-acceso) .tarjeta-ahorro-estimado-gnv p { color: #bcd4f1 !important; }
+body:not(.pagina-acceso) .filtros-montos-pap-gnv label,.modal-montos-pap-gnv .historial-montos-pap-gnv strong { color: #d8e8ff !important; }
+body:not(.pagina-acceso) .filtros-montos-pap-gnv select { color: #f4f8ff !important; border-color: #405d88 !important; background: #162846 !important; }
+body:not(.pagina-acceso) .tabla-montos-pap-gnv { border-color: #405d88 !important; }
+body:not(.pagina-acceso) .tabla-montos-pap-gnv table { color: #d8e8ff !important; }
+body:not(.pagina-acceso) .tabla-montos-pap-gnv th { color: #bcd4f1 !important; background: #1a2d4c !important; }
+body:not(.pagina-acceso) .tabla-montos-pap-gnv td { border-color: #344f78 !important; }
+body:not(.pagina-acceso) .historial-montos-pap-gnv { background: #17284a !important; }
+body:not(.pagina-acceso) .historial-montos-pap-gnv p { color: #bcd4f1 !important; }
 body:not(.pagina-acceso) .mapa-panel-gnv .leyenda-mapa-gnv > header { border-color: rgba(126, 169, 235, .28) !important; }
 body:not(.pagina-acceso) .mapa-panel-gnv .leyenda-mapa-gnv > header button { color: #d9e7ff !important; border-color: rgba(126, 169, 235, .48) !important; background: #1d345b !important; }
 

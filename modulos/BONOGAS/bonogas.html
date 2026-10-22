@@ -7,9 +7,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-  <link rel="stylesheet" href="../../estilos_generales.css?v=20260828-2">
+  <link rel="stylesheet" href="../../estilos_generales.css?v=20261022-5">
   <link rel="stylesheet" href="../../estilos_asistente_ia.css?v=20260813-3">
-  <link rel="stylesheet" href="estilos_bonogas.css?v=20260827-9">
+  <link rel="stylesheet" href="estilos_bonogas.css?v=20261022-1">
   <link rel="stylesheet" href="estilos_tematicos_bonogas.css?v=20260909-3">
 <link rel="stylesheet" href="../../temas.css?v=20260909-1">
 </head>
@@ -75,12 +75,14 @@
             <div class="controles-mapa">
               <button id="botonMapas" type="button" aria-expanded="false" aria-controls="panelMapas"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h3M11 12h9M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="13" cy="18" r="2"/></svg>Mapas</button>
               <button id="botonCapas" type="button" aria-expanded="false" aria-controls="panelCapas"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3-9 5 9 5 9-5-9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg>Capas</button>
+              <button id="botonSubirCapaBonogas" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4M5 14v5h14v-5"/></svg>Subir capa</button>
               <button id="botonTematicos" type="button" aria-expanded="false" aria-controls="panelTematicos"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.5 16.5c1.2-1.9 1.7-4.2 1.7-6.5a3.8 3.8 0 0 1 7.6 0c0 2.3.5 4.6 1.7 6.5"/><path d="M5 17h14M9.5 20h5"/><circle cx="12" cy="6" r="1"/></svg>Temáticos</button>
             </div>
             <div class="panel-mapa panel-mapas" id="panelMapas" hidden>
               <strong>Mapas base</strong>
               <label><input type="radio" name="mapaBase" value="osm" checked> OpenStreetMap</label>
               <label><input type="radio" name="mapaBase" value="topografico"> Topográfico</label>
+              <label><input type="radio" name="mapaBase" value="satelite" data-selector-satelite> Satélite</label>
             </div>
             <div class="panel-mapa panel-capas" id="panelCapas" hidden>
               <strong>Capas superpuestas</strong>
@@ -164,6 +166,7 @@
             </section>
 
             <section class="detalle-beneficiario" id="detalleBeneficiario" hidden></section>
+            <button class="boton-exportar-panel bonogas-strat-panel-btn" id="bonogasEstratificationMapPdfBtn" type="button" title="Generar mapa de estratificación"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM13 13h3v3h-3z"/></svg>Generar mapa de estratificación</button>
             <button class="boton-exportar-panel" id="botonExportarBonogas" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 11l4 4 4-4M5 19h14"/></svg>Exportar</button>
           </aside>
         </div>
@@ -305,6 +308,27 @@
       <div class="detalle-exportacion-bonogas"><span>Alcance</span><strong id="alcanceExportacionBonogas">Todos los registros filtrados</strong><span>Registros</span><strong id="cantidadExportacionBonogas">0</strong></div>
       <footer class="acciones-exportacion-bonogas"><button type="button" data-cerrar-modal="modalExportacionBonogas">Cancelar</button><button class="confirmar-exportacion-bonogas" id="confirmarExportacionBonogas" type="button">Generar reporte</button></footer>
     </div>
+  </dialog>
+
+  <dialog class="modal-reporte" id="modalMapaEstratificacion" aria-labelledby="tituloMapaEstratificacion" style="width:min(1320px,96vw);max-height:94vh;color:#edf4ff;border:1px solid #38537d;background:#101a35">
+    <header style="color:#fff;border-bottom:1px solid #34496d;background:#121d39"><div><small style="color:#69d6e8">ANÁLISIS TERRITORIAL</small><h2 id="tituloMapaEstratificacion">Generar mapa de estratificación</h2><p style="color:#b9c9e2">Seleccione ubicación, revise filtros y genere el PDF con el formato actual.</p></div><button type="button" id="cerrarMapaEstratificacion" aria-label="Cerrar" style="background:#0e1730">×</button></header>
+    <div class="modal-cuerpo" style="grid-template-columns:1.22fr .78fr;gap:20px;align-items:start;background:#101a35">
+      <section style="display:grid;gap:13px;padding:20px;border:1px solid #37527b;border-radius:20px;background:#111c38"><h3 style="margin:0;color:#68d7e9">Selección de ubicación</h3><div id="mapaSeleccionEstratificacion" style="height:370px;overflow:hidden;border:1px solid #5b84a6;border-radius:16px;background:#d8e8f0"></div><div id="rutaMapaEstratificacion" style="padding:12px 16px;border-radius:12px;color:#e9f2ff;background:#1c2b4c;font-weight:800">Perú</div><div style="display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center"><label style="font-weight:800">Provincia</label><select id="estratProvincia" style="height:42px;padding:0 12px;border:1px solid #294a70;border-radius:12px;color:#eff5ff;background:#0d1730"></select></div><div style="display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center"><label style="font-weight:800">Distrito</label><select id="estratDistrito" style="height:42px;padding:0 12px;border:1px solid #294a70;border-radius:12px;color:#eff5ff;background:#0d1730"></select></div><select id="estratDepartamento" hidden></select><button type="button" id="volverMapaEstratificacion" style="justify-self:start;border:1px solid #41648c;border-radius:10px;padding:9px 12px;color:#d8e9ff;background:#1b2b4d;font-weight:800">Volver a Perú</button></section>
+      <section style="display:grid;gap:14px;max-height:690px;overflow:auto;padding:20px;border:1px solid #37527b;border-radius:20px;background:#111c38"><h3 style="margin:0;color:#68d7e9">Filtros opcionales</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label>Estrato<select id="estratEstrato"></select></label><label>Empresa instaladora<select id="estratInstaladora"></select></label><label>Concesionaria<select id="estratConcesionaria"></select></label><label>Fecha desde<input id="estratFechaDesde" type="date"></label><label>Fecha hasta<input id="estratFechaHasta" type="date"></label></div><div style="display:flex;gap:10px"><button type="button" id="limpiarMapaEstratificacion">Limpiar</button><button type="button" id="aplicarMapaEstratificacion" class="notificar">Aplicar filtros</button></div><h3 style="margin:6px 0 0;color:#68d7e9">Vista previa</h3><div><strong id="estratTotal" style="font-size:2rem">0</strong> <b>registros encontrados</b></div><div id="estadoMapaEstratificacion" style="padding:12px;border:1px solid #355277;border-radius:12px;color:#c9d8ee;line-height:1.55">Ubicación: Perú</div><div id="vistaMapaEstratificacion" style="height:195px;border:1px solid #5b84a6;border-radius:14px;overflow:hidden;background:#d8e8f0"></div><section class="tabla-modal"><table><thead><tr><th>Estrato</th><th>Clasificación</th><th>Registros</th><th>%</th></tr></thead><tbody id="tablaMapaEstratificacion"></tbody></table></section><span id="estratDistritos" hidden></span><span id="estratCantidadEstratos" hidden></span></section>
+    </div>
+    <footer class="acciones-exportacion-bonogas" style="padding:16px 22px;border-top:1px solid #34496d;background:#101a35"><span style="margin-right:auto;color:#b9c9e2;font-weight:750">El PDF conserva mapa grande, LOCALIZACIÓN, UBICACIÓN y ficha.</span><button type="button" id="descargarEstratificacionCsv">Descargar CSV</button><button type="button" id="generarMapaEstratificacionPdf" class="confirmar-exportacion-bonogas">Generar PDF</button></footer>
+  </dialog>
+
+  <dialog class="modal-subir-capa-bonogas" id="modalSubirCapaBonogas" aria-labelledby="tituloSubirCapaBonogas">
+    <header><div><small>CAPA GEOGRÁFICA</small><h2 id="tituloSubirCapaBonogas">Subir capa GIS</h2><p>Cargue archivos GPX, GeoJSON, KML o ZIP, asigne un nombre y defina si será individual o compartida.</p></div><button type="button" id="cerrarSubirCapaBonogas" aria-label="Cerrar">×</button></header>
+    <div class="cuerpo-subir-capa-bonogas">
+      <label class="campo-subir-capa-bonogas">Archivo<input id="archivoGisBonogas" type="file" accept=".kml,.gpx,.json,.geojson,.zip"><span class="boton-archivo-capa-bonogas" id="seleccionarArchivoCapaBonogas">Seleccionar archivo</span><small id="estadoCargaCapaBonogas">Ningún archivo seleccionado</small></label>
+      <label class="campo-subir-capa-bonogas">Nombre de la capa<input id="nombreCapaBonogas" type="text" placeholder="Ej. Troncal Sur Arequipa" autocomplete="off"></label>
+      <fieldset class="visibilidad-capa-bonogas"><legend>Visibilidad de la capa</legend><label><input type="radio" name="visibilidadCapaBonogas" value="individual" checked><span><b>Individual</b><small>Solo visible para el usuario que la subió</small></span></label><label><input type="radio" name="visibilidadCapaBonogas" value="compartida"><span><b>Compartida</b><small>Visible para el equipo autorizado de la agrupación</small></span></label></fieldset>
+      <label class="campo-subir-capa-bonogas">Tipo detectado<output id="tipoCapaDetectadoBonogas">Seleccione un archivo</output></label>
+      <p class="estado-subir-capa-bonogas" id="mensajeSubirCapaBonogas">La capa se visualizará e indexará en el mapa al cargarla.</p>
+    </div>
+    <footer><button type="button" id="cancelarSubirCapaBonogas">Cancelar</button><button type="button" id="cargarCapaBonogas">Cargar capa</button></footer>
   </dialog>
 
   <dialog class="modal-reporte modal-validacion-ia" id="modalValidacionIA">
@@ -466,8 +490,8 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
-<script src="../../scripts_generales.js?v=20260831-1"></script>
-  <script src="bonogas.js?v=20260903-5"></script>
+<script src="../../scripts_generales.js?v=20261022-5"></script>
+    <script src="bonogas.js?v=20261022-9"></script>
   <script src="../../asistente_ia.js?v=20260813-3"></script>
 </body>
 </html>

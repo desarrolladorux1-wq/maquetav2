@@ -1343,6 +1343,14 @@
   });
 
   elementos.panelCapas.addEventListener('change', function (evento) {
+    if (evento.target.matches('input[data-base]') && mapa) {
+      if (capaBaseActual) mapa.removeLayer(capaBaseActual);
+      capaBaseActual = capasBase[evento.target.dataset.base];
+      capaBaseActual.addTo(mapa);
+      capaBaseActual.bringToBack();
+      document.querySelector('input[name="mapaBase"][value="'+evento.target.dataset.base+'"]').checked = true;
+      return;
+    }
     if (!evento.target.matches('input[type="checkbox"]')) return;
     if (evento.target === elementos.activarAgentes) {
       establecerCapaAgentes(evento.target.checked);

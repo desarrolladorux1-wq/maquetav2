@@ -1940,6 +1940,7 @@
     L.control.zoom({position:'bottomleft'}).addTo(mapa);
     bases.osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'});
     bases.topografico=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{attribution:'© OpenTopoMap'});
+    bases.satelite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'Imágenes © Esri'});
     capaBase=bases.osm.addTo(mapa); capaInfluencia=L.layerGroup().addTo(mapa); capaManzanas=L.layerGroup().addTo(mapa); capaPredios=L.layerGroup().addTo(mapa); capaProyectos=L.layerGroup().addTo(mapa);
     capaDibujo=L.layerGroup().addTo(mapa);
     ajustarAlturaTableroMasificacion();

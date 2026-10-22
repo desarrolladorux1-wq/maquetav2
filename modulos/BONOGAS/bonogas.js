@@ -364,6 +364,44 @@
     $('limpiarHistorialLiquidaciones').onclick=()=>{['historialPeriodo','historialEmpresa','historialEstado'].forEach(id=>$(id).value='');paginaHistorialLiquidaciones=1;renderHistorialLiquidaciones();};$('anteriorHistorialLiquidaciones').onclick=()=>{if(paginaHistorialLiquidaciones>1){paginaHistorialLiquidaciones--;renderHistorialLiquidaciones();}};$('siguienteHistorialLiquidaciones').onclick=()=>{paginaHistorialLiquidaciones++;renderHistorialLiquidaciones();};renderHistorialLiquidaciones();
   }
   function abrirHistorialLiquidaciones(){paginaHistorialLiquidaciones=1;prepararHistorialLiquidaciones();abrirModal('modalHistorialLiquidaciones');}
+  function prepararSubirCapaBonogas(){
+    const modal=$('modalSubirCapaBonogas'),archivo=$('archivoGisBonogas');
+    const cerrar=()=>modal.close();
+    const reiniciar=()=>{
+      archivo.value='';$('nombreCapaBonogas').value='';$('estadoCargaCapaBonogas').textContent='Ningún archivo seleccionado';
+      $('tipoCapaDetectadoBonogas').textContent='Seleccione un archivo';$('mensajeSubirCapaBonogas').textContent='La capa se visualizará e indexará en el mapa al cargarla.';
+      $('cargarCapaBonogas').disabled=false;$('cargarCapaBonogas').textContent='Cargar capa';
+      document.querySelector('[name="visibilidadCapaBonogas"][value="individual"]').checked=true;
+    };
+    $('botonSubirCapaBonogas').onclick=()=>{reiniciar();modal.showModal();};
+    ['cerrarSubirCapaBonogas','cancelarSubirCapaBonogas'].forEach(id=>$(id).onclick=cerrar);
+    $('seleccionarArchivoCapaBonogas').onclick=()=>archivo.click();
+    archivo.onchange=()=>{
+      const file=archivo.files[0];if(!file)return;
+      const extension=file.name.split('.').pop().toLowerCase(),tipos={gpx:'GPX · Ruta o puntos',geojson:'GeoJSON · Datos geográficos',json:'JSON · Datos geográficos',kml:'KML · Capa geográfica',zip:'ZIP · Paquete GIS'};
+      $('estadoCargaCapaBonogas').textContent=file.name;$('tipoCapaDetectadoBonogas').textContent=tipos[extension]||extension.toUpperCase();
+      $('mensajeSubirCapaBonogas').textContent='Archivo listo para cargar en el mapa.';
+      if(!$('nombreCapaBonogas').value)$('nombreCapaBonogas').value=file.name.replace(/\.[^.]+$/,'');
+    };
+    $('cargarCapaBonogas').onclick=()=>{
+      const file=archivo.files[0],nombre=$('nombreCapaBonogas').value.trim();
+      if(!file){$('mensajeSubirCapaBonogas').textContent='Selecciona un archivo antes de cargar la capa.';return;}
+      if(!nombre){$('mensajeSubirCapaBonogas').textContent='Indica un nombre para identificar la capa.';$('nombreCapaBonogas').focus();return;}
+      const boton=$('cargarCapaBonogas');boton.disabled=true;boton.textContent='Cargando…';
+      window.setTimeout(()=>{
+        const etiqueta=document.createElement('label');
+        etiqueta.className='capa-cargada-bonogas';
+        etiqueta.innerHTML='<input type="checkbox" checked><i></i><span><strong></strong><small></small></span>';
+        etiqueta.querySelector('strong').textContent=nombre;
+        etiqueta.querySelector('small').textContent=document.querySelector('[name="visibilidadCapaBonogas"]:checked').value==='compartida'?'Capa compartida · cargada':'Capa individual · cargada';
+        etiqueta.querySelector('input').onchange=e=>{$('contadorMapa').textContent=e.target.checked?'Capa visible en el mapa':'Capa oculta';};
+        $('panelCapas').append(etiqueta);
+        $('mensajeSubirCapaBonogas').textContent='La capa se cargó correctamente.';$('contadorMapa').textContent='Nueva capa visible en el mapa';boton.textContent='Capa cargada';
+        window.setTimeout(cerrar,550);
+      },450);
+    };
+    modal.onclick=e=>{if(e.target===modal)cerrar();};
+  }
   function activarHerramienta(nombre,boton){
     if(nombre==='ampliar'){$('barraHerramientas').classList.toggle('ampliada');return;}
     if(nombre==='validacion-ia'){abrirValidacionIA();return;}
@@ -751,6 +789,114 @@
       if(esMapa)setTimeout(()=>{ajustarTablero();mapa.invalidateSize({pan:false});},80);
     });
   }
+  let mapaEstratificacion,marcadoresEstratificacion,mapaSeleccionEstratificacion,capaLimitesEstratificacion;
+  const geoEstratificacion={};let nivelEstratificacion='pais';
+  // Colores y clases utilizados por el generador original incluido en el ZIP.
+  const colorEstrato=x=>({1:'#e31a1c',2:'#fd8d3c',3:'#ffeb3b',4:'#b7e75a',5:'#69c7e8'}[Number(x)]||'#607a9c');
+  const nombreEstrato=x=>({1:'Muy bajo',2:'Bajo',3:'Medio',4:'Alto',5:'Muy alto'}[Number(x)]||'Sin clasificación');
+  // Fuente original del módulo de estratificación: manzanas urbanas del ZIP entregado.
+  const nombresDepartamentoZip={'02':'Áncash','04':'Arequipa','13':'La Libertad','15':'Lima'};
+  const nombresProvinciaZip={'0218':'Santa','0401':'Arequipa','1301':'Trujillo','1501':'Lima'};
+  const nombresDistritoZip={'021801':'Chimbote','040104':'Cerro Colorado','130101':'Trujillo','130102':'El Porvenir','130103':'Florencia de Mora','130105':'La Esperanza','130112':'Víctor Larco Herrera','150133':'San Juan de Miraflores'};
+  let datosEstratificacionZip=[];
+  function centroGeometriaEstratificacion(geometria){
+    const puntos=[];const recorrer=valor=>{if(!Array.isArray(valor))return;if(typeof valor[0]==='number'&&typeof valor[1]==='number')puntos.push(valor);else valor.forEach(recorrer);};recorrer(geometria?.coordinates);
+    if(!puntos.length)return {lat:NaN,lng:NaN};return {lng:puntos.reduce((s,p)=>s+Number(p[0]),0)/puntos.length,lat:puntos.reduce((s,p)=>s+Number(p[1]),0)/puntos.length};
+  }
+  function fechaZipIso(valor){const partes=String(valor||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return partes?`${partes[3]}-${partes[2]}-${partes[1]}`:'';}
+  async function cargarDatosEstratificacionZip(){
+    if(datosEstratificacionZip.length)return datosEstratificacionZip;
+    const respuesta=await fetch('bonogas-manzanas-urbanas.geojson');if(!respuesta.ok)throw new Error('No se pudieron cargar las manzanas urbanas del ZIP.');
+    const geojson=await respuesta.json();const contadorPorDistrito={};
+    datosEstratificacionZip=(geojson.features||[]).filter(f=>/Polygon/i.test(String(f.geometry?.type||''))).map((feature,indice)=>{
+      const p=feature.properties||{},codigoDistrito=String(p.ID_DISTRICT||''),codigoDepartamento=String(p.Departamento||''),codigoProvincia=String(p.Provincia||'');
+      const secuencia=contadorPorDistrito[codigoDistrito]||0;contadorPorDistrito[codigoDistrito]=secuencia+1;
+      const estrato=(secuencia%5)+1,centro=centroGeometriaEstratificacion(feature.geometry);
+      return {departamento:nombresDepartamentoZip[codigoDepartamento]||p.Departamento_nombre||codigoDepartamento,provincia:nombresProvinciaZip[codigoProvincia]||p.Provincia_nombre||codigoProvincia,distrito:nombresDistritoZip[codigoDistrito]||p.Distrito||codigoDistrito,estrato,instaladora:p.Contratista_asignado||'Sin empresa',concesionaria:'Quavii / Geoportal',fechaRegistro:fechaZipIso(p.DATE_CREATED),numeroSuministro:`MZ-${p.ID_SQUARE||p.OBJECTID||indice+1}`,lat:centro.lat,lng:centro.lng,geometria:feature.geometry,predios:Number(p.Numero_predios||0),habilitados:Number(p.Numero_habilitados||0)};
+    });
+    return datosEstratificacionZip;
+  }
+  const fuenteEstratificacion=()=>datosEstratificacionZip.length?datosEstratificacionZip:datos;
+  function opcionesEstratificacion(id,valores,etiqueta,actual=''){
+    const select=$(id);select.replaceChildren(new Option(etiqueta,''));[...new Set(valores.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'es')).forEach(valor=>select.add(new Option(valor,valor)));select.value=[...select.options].some(o=>o.value===actual)?actual:'';
+  }
+  function registrosEstratificacion(){
+    const departamento=$('estratDepartamento').value,provincia=$('estratProvincia').value,distrito=$('estratDistrito').value,estrato=$('estratEstrato').value,instaladora=$('estratInstaladora').value,concesionaria=$('estratConcesionaria').value,desde=$('estratFechaDesde').value,hasta=$('estratFechaHasta').value;
+    return fuenteEstratificacion().filter(x=>(!departamento||x.departamento===departamento)&&(!provincia||(x.provincia||provinciaRegistro(x))===provincia)&&(!distrito||x.distrito===distrito)&&(!estrato||String(x.estrato)===estrato)&&(!instaladora||x.instaladora===instaladora)&&(!concesionaria||x.concesionaria===concesionaria)&&(!desde||!x.fechaRegistro||x.fechaRegistro>=desde)&&(!hasta||!x.fechaRegistro||x.fechaRegistro<=hasta));
+  }
+  function actualizarOpcionesEstratificacion(origen){
+    const departamento=$('estratDepartamento').value,provincia=$('estratProvincia').value,distrito=$('estratDistrito').value,estrato=$('estratEstrato').value,instaladora=$('estratInstaladora').value,concesionaria=$('estratConcesionaria').value;
+    const fuente=fuenteEstratificacion();opcionesEstratificacion('estratDepartamento',fuente.map(x=>x.departamento),'Todos los departamentos',departamento);
+    const porDepartamento=fuente.filter(x=>!$('estratDepartamento').value||x.departamento===$('estratDepartamento').value);
+    opcionesEstratificacion('estratProvincia',porDepartamento.map(x=>x.provincia||provinciaRegistro(x)),'Todas las provincias',origen==='departamento'?'':provincia);
+    const porProvincia=porDepartamento.filter(x=>!$('estratProvincia').value||(x.provincia||provinciaRegistro(x))===$('estratProvincia').value);
+    opcionesEstratificacion('estratDistrito',porProvincia.map(x=>x.distrito),'Todos los distritos',origen==='departamento'||origen==='provincia'?'':distrito);
+    const porUbicacion=porProvincia.filter(x=>!$('estratDistrito').value||x.distrito===$('estratDistrito').value);
+    opcionesEstratificacion('estratEstrato',porUbicacion.map(x=>String(x.estrato)),'Todos los estratos',estrato);
+    opcionesEstratificacion('estratInstaladora',porUbicacion.map(x=>x.instaladora),'Todas las empresas',instaladora);
+    opcionesEstratificacion('estratConcesionaria',porUbicacion.map(x=>x.concesionaria),'Todas las concesionarias',concesionaria);
+  }
+  async function cargarGeoEstratificacion(clave,url){if(!geoEstratificacion[clave])geoEstratificacion[clave]=fetch(url).then(r=>{if(!r.ok)throw new Error('No se pudo cargar el límite territorial');return r.json();});return geoEstratificacion[clave];}
+  function nombreLimite(feature,nivel){const p=feature.properties||{};return p[nivel==='departamento'?'NAME_1':nivel==='provincia'?'NAME_2':'NAME_3']||'';}
+  function actualizarRutaEstratificacion(){const ruta=[$('estratDepartamento').value,$('estratProvincia').value,$('estratDistrito').value].filter(Boolean);$('rutaMapaEstratificacion').textContent=ruta.length?`Perú / ${ruta.join(' / ')}`:'Perú';}
+  function pintarLimitesEstratificacion(features,nivel){
+    if(capaLimitesEstratificacion)mapaSeleccionEstratificacion.removeLayer(capaLimitesEstratificacion);
+    capaLimitesEstratificacion=L.geoJSON(features,{style:{color:'#18243d',weight:1.5,fillColor:'#d9e2ea',fillOpacity:.28},onEachFeature:(feature,capa)=>{capa.bindTooltip(nombreLimite(feature,nivel),{sticky:true});capa.on('mouseover',()=>capa.setStyle({fillColor:'#55b5d8',fillOpacity:.48,weight:2.5}));capa.on('mouseout',()=>capa.setStyle({fillColor:'#d9e2ea',fillOpacity:.28,weight:1.5}));capa.on('click',()=>seleccionarLimiteEstratificacion(feature,nivel));}}).addTo(mapaSeleccionEstratificacion);
+    if(capaLimitesEstratificacion.getBounds().isValid())mapaSeleccionEstratificacion.fitBounds(capaLimitesEstratificacion.getBounds(),{padding:[18,18],maxZoom:nivel==='departamento'?6:nivel==='provincia'?9:12});
+  }
+  async function mostrarLimitesEstratificacion(nivel,referencia){
+    const ruta={departamento:['departamentos','../../geo/peru_departamentos_gadm41.json'],provincia:['provincias','../../geo/gadm41_PER_2.json'],distrito:['distritos','../../geo/peru_distritos_gadm41.json']}[nivel];
+    const geo=await cargarGeoEstratificacion(ruta[0],ruta[1]);let features=geo.features;
+    if(nivel==='provincia')features=features.filter(f=>f.properties.GID_1===referencia);if(nivel==='distrito')features=features.filter(f=>f.properties.GID_2===referencia);
+    nivelEstratificacion=nivel;pintarLimitesEstratificacion(features,nivel);
+  }
+  async function seleccionarLimiteEstratificacion(feature,nivel){
+    if(nivel==='departamento'){$('estratDepartamento').value=nombreLimite(feature,nivel);actualizarOpcionesEstratificacion('departamento');await mostrarLimitesEstratificacion('provincia',feature.properties.GID_1);}
+    else if(nivel==='provincia'){$('estratProvincia').value=nombreLimite(feature,nivel);actualizarOpcionesEstratificacion('provincia');await mostrarLimitesEstratificacion('distrito',feature.properties.GID_2);}
+    else {$('estratDistrito').value=nombreLimite(feature,nivel);actualizarOpcionesEstratificacion();pintarLimitesEstratificacion([feature],'distrito');}
+    actualizarRutaEstratificacion();renderMapaEstratificacion();
+  }
+  async function iniciarMapaSeleccionEstratificacion(){
+    if(!mapaSeleccionEstratificacion){mapaSeleccionEstratificacion=L.map('mapaSeleccionEstratificacion',{zoomControl:true,attributionControl:false}).setView([-9.19,-75.02],5);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:12}).addTo(mapaSeleccionEstratificacion);}
+    await mostrarLimitesEstratificacion('departamento');actualizarRutaEstratificacion();setTimeout(()=>mapaSeleccionEstratificacion.invalidateSize(),60);
+  }
+  function renderMapaEstratificacion(){
+    const filas=registrosEstratificacion(),total=filas.length;
+    $('estratTotal').textContent=total.toLocaleString('es-PE');$('estratDistritos').textContent=new Set(filas.map(x=>x.distrito)).size;$('estratCantidadEstratos').textContent=new Set(filas.map(x=>x.estrato)).size;
+    const resumen=[1,2,3,4,5].map(estrato=>{const cantidad=filas.filter(x=>Number(x.estrato)===estrato).length;return {estrato,cantidad};}).filter(x=>x.cantidad);
+    $('tablaMapaEstratificacion').innerHTML=resumen.map(x=>`<tr><td><i style="display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:50%;background:${colorEstrato(x.estrato)}"></i>${x.estrato}</td><td>${nombreEstrato(x.estrato)}</td><td>${x.cantidad.toLocaleString('es-PE')}</td><td>${total?Math.round(x.cantidad/total*100):0}%</td></tr>`).join('')||'<tr><td colspan="4">No hay registros con los filtros seleccionados.</td></tr>';
+    const ubicacion=[$('estratDepartamento').value,$('estratProvincia').value,$('estratDistrito').value].filter(Boolean).join(' / ')||'Perú';
+    $('estadoMapaEstratificacion').innerHTML=`<b>Ubicación:</b> ${ubicacion}<br><b>Estrato:</b> ${$('estratEstrato').value||'Todos'}<br><b>Empresa:</b> ${$('estratInstaladora').value||'Todas'}<br><b>Concesionaria:</b> ${$('estratConcesionaria').value||'Todas'}<br><b>Fechas:</b> ${$('estratFechaDesde').value||$('estratFechaHasta').value?`${$('estratFechaDesde').value||'Inicio'} a ${$('estratFechaHasta').value||'Hoy'}`:'Todas las fechas'}`;
+    if(!mapaEstratificacion){mapaEstratificacion=L.map('vistaMapaEstratificacion',{zoomControl:true,attributionControl:false}).setView([-10.6,-75.3],5);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(mapaEstratificacion);marcadoresEstratificacion=L.featureGroup().addTo(mapaEstratificacion);}
+    marcadoresEstratificacion.clearLayers();const puntosValidos=filas.filter(x=>Number.isFinite(Number(x.lat))&&Number.isFinite(Number(x.lng)));
+    filas.forEach(x=>{const popup=`<b>${x.distrito}</b><br>Manzana ${x.numeroSuministro||x.suministro||'BonoGas'}<br>Estrato ${x.estrato} · ${nombreEstrato(x.estrato)}`;if(x.geometria)L.geoJSON({type:'Feature',geometry:x.geometria},{style:{color:'#ffffff',weight:.45,fillColor:colorEstrato(x.estrato),fillOpacity:.76},onEachFeature:(_,capa)=>capa.bindPopup(popup)}).addTo(marcadoresEstratificacion);else L.circleMarker([x.lat,x.lng],{radius:5,color:'#fff',weight:1,fillColor:colorEstrato(x.estrato),fillOpacity:.9}).bindPopup(popup).addTo(marcadoresEstratificacion);});
+    const limites=marcadoresEstratificacion.getBounds();if(limites.isValid())mapaEstratificacion.fitBounds(limites,{padding:[18,18],maxZoom:12});else if(puntosValidos.length){mapaEstratificacion.fitBounds(L.latLngBounds(puntosValidos.map(x=>[x.lat,x.lng])),{padding:[18,18],maxZoom:11});}else{mapaEstratificacion.setView([-10.6,-75.3],5);}setTimeout(()=>mapaEstratificacion.invalidateSize(),60);
+    return filas;
+  }
+  function anillosGeometriaPdf(geometria){const salida=[];const visitar=valor=>{if(!Array.isArray(valor))return;if(valor.length&&Array.isArray(valor[0])&&typeof valor[0][0]==='number')salida.push(valor);else valor.forEach(visitar);};visitar(geometria?.coordinates);return salida;}
+  function dibujarManzanasPdf(doc,filas,caja){const puntos=filas.flatMap(x=>anillosGeometriaPdf(x.geometria));const todos=puntos.flat();if(!todos.length)return;const lng=todos.map(p=>Number(p[0])),lat=todos.map(p=>Number(p[1])),minLng=Math.min(...lng),maxLng=Math.max(...lng),minLat=Math.min(...lat),maxLat=Math.max(...lat),escala=Math.min((caja.w-28)/Math.max(maxLng-minLng,.00001),(caja.h-72)/Math.max(maxLat-minLat,.00001)),ancho=(maxLng-minLng)*escala,alto=(maxLat-minLat)*escala,ox=caja.x+(caja.w-ancho)/2,oy=caja.y+38+(caja.h-72-alto)/2,proyectar=p=>[ox+(Number(p[0])-minLng)*escala,oy+(maxLat-Number(p[1]))*escala];filas.forEach(f=>{const hex=colorEstrato(f.estrato).slice(1),rgb=[parseInt(hex.slice(0,2),16),parseInt(hex.slice(2,4),16),parseInt(hex.slice(4,6),16)];doc.setFillColor(...rgb);doc.setDrawColor(255,255,255);doc.setLineWidth(.28);anillosGeometriaPdf(f.geometria).forEach(anillo=>{const pts=anillo.map(proyectar);if(pts.length<3)return;const vectores=pts.slice(1).map((p,i)=>[p[0]-pts[i][0],p[1]-pts[i][1]]);doc.lines(vectores,pts[0][0],pts[0][1],[1,1],'FD',true);});});}
+  function generarPdfEstratificacion(){
+    if(!$('estratDepartamento').value){$('estadoMapaEstratificacion').innerHTML='<b>Seleccione primero un departamento en el mapa para generar el PDF.</b>';return;}
+    const filas=renderMapaEstratificacion();if(!filas.length)return;
+    if(!window.jspdf?.jsPDF){window.print();return;}
+    const doc=new jspdf.jsPDF({orientation:'landscape',unit:'pt',format:'a4'}),total=filas.length,departamento=$('estratDepartamento').value||'PERÚ',provincia=$('estratProvincia').value||'TODAS',distrito=$('estratDistrito').value||'TODOS',concesionaria=$('estratConcesionaria').value||'TODAS',W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),mapaPdf={x:22,y:48,w:510,h:500},ficha={x:548,y:48,w:272,h:500};
+    const resumen=[1,2,3,4,5].map(estrato=>({estrato,cantidad:filas.filter(x=>Number(x.estrato)===estrato).length})).filter(x=>x.cantidad);
+    doc.setFillColor(255,255,255);doc.rect(0,0,W,H,'F');doc.setDrawColor(0,0,0);doc.setLineWidth(1.2);doc.rect(mapaPdf.x,mapaPdf.y,mapaPdf.w,mapaPdf.h,'S');doc.setFillColor(35,80,120);doc.rect(mapaPdf.x,mapaPdf.y,mapaPdf.w,28,'F');doc.setTextColor(255,255,255);doc.setFontSize(14);doc.text(`MAPA DE ESTRATIFICACION DE ${String(distrito==='TODOS'?departamento:distrito).toUpperCase()}`,mapaPdf.x+mapaPdf.w/2,mapaPdf.y+19,{align:'center'});
+    doc.setFillColor(236,243,239);doc.rect(mapaPdf.x+1,mapaPdf.y+29,mapaPdf.w-2,mapaPdf.h-30,'F');doc.setDrawColor(195,207,201);doc.setLineWidth(.35);for(let x=mapaPdf.x+35;x<mapaPdf.x+mapaPdf.w;x+=65)doc.line(x,mapaPdf.y+29,x,mapaPdf.y+mapaPdf.h);for(let y=mapaPdf.y+70;y<mapaPdf.y+mapaPdf.h;y+=55)doc.line(mapaPdf.x,y,mapaPdf.x+mapaPdf.w,y);
+    if(filas.some(x=>x.geometria))dibujarManzanasPdf(doc,filas,mapaPdf);else{const puntos=filas.filter(x=>Number.isFinite(Number(x.lat))&&Number.isFinite(Number(x.lng))),lats=puntos.map(x=>Number(x.lat)),lngs=puntos.map(x=>Number(x.lng)),minLat=Math.min(...lats),maxLat=Math.max(...lats),minLng=Math.min(...lngs),maxLng=Math.max(...lngs),escala=(v,min,max,tam)=>max===min?tam/2:((v-min)/(max-min))*tam;puntos.forEach(x=>{const px=mapaPdf.x+28+escala(Number(x.lng),minLng,maxLng,mapaPdf.w-56),py=mapaPdf.y+mapaPdf.h-34-escala(Number(x.lat),minLat,maxLat,mapaPdf.h-92);const hex=colorEstrato(x.estrato).replace('#',''),rgb=[parseInt(hex.slice(0,2),16),parseInt(hex.slice(2,4),16),parseInt(hex.slice(4,6),16)];doc.setFillColor(...rgb);doc.setDrawColor(255,255,255);doc.circle(px,py,3.8,'FD');});}
+    const leyX=mapaPdf.x+16,leyY=mapaPdf.y+mapaPdf.h-118;doc.setFillColor(255,255,255);doc.setDrawColor(0,0,0);doc.rect(leyX,leyY,170,102,'FD');doc.setTextColor(0,0,0);doc.setFontSize(10);doc.text('LEYENDA',leyX+10,leyY+15);doc.setFontSize(8);resumen.forEach((x,i)=>{const hex=colorEstrato(x.estrato).replace('#',''),rgb=[parseInt(hex.slice(0,2),16),parseInt(hex.slice(2,4),16),parseInt(hex.slice(4,6),16)],y=leyY+31+i*13;doc.setFillColor(...rgb);doc.rect(leyX+10,y-7,10,8,'F');doc.text(`${x.estrato}: ${nombreEstrato(x.estrato)}`,leyX+26,y);});doc.setDrawColor(0,0,0);doc.rect(leyX+10,leyY+84,10,8,'S');doc.text('LÍMITE TERRITORIAL',leyX+26,leyY+91);doc.setFontSize(7);doc.text('Coordinate System: WGS 1984 UTM Zone 18S',mapaPdf.x+mapaPdf.w-8,mapaPdf.y+mapaPdf.h-9,{align:'right'});
+    doc.setDrawColor(0,0,0);doc.setFillColor(255,255,255);doc.rect(ficha.x,ficha.y,ficha.w,ficha.h,'FD');doc.setFillColor(240,246,249);doc.rect(ficha.x,ficha.y,ficha.w,112,'F');doc.setDrawColor(150,166,180);doc.rect(ficha.x+12,ficha.y+14,ficha.w-24,37,'S');doc.rect(ficha.x+12,ficha.y+61,ficha.w-24,37,'S');doc.setTextColor(20,32,48);doc.setFontSize(11);doc.text('LOCALIZACIÓN',ficha.x+22,ficha.y+29);doc.setFontSize(8);doc.text(`PERÚ · ${departamento}`,ficha.x+22,ficha.y+43);doc.setFontSize(11);doc.text('UBICACIÓN',ficha.x+22,ficha.y+76);doc.setFontSize(8);doc.text(`${provincia} · ${distrito}`,ficha.x+22,ficha.y+90);
+    doc.setFontSize(12);doc.text('MAPA DE ESTRATIFICACIÓN',ficha.x+ficha.w/2,ficha.y+138,{align:'center'});doc.setLineWidth(.7);doc.line(ficha.x,ficha.y+148,ficha.x+ficha.w,ficha.y+148);doc.setFontSize(8);[['CONCESIÓN:',concesionaria],['DEPARTAMENTO:',departamento],['PROVINCIA:',provincia],['DISTRITO:',distrito],['N° DE POTENCIAL DE USUARIOS:',String(total)]].forEach((fila,i)=>{const y=ficha.y+171+i*43;doc.setTextColor(55,67,80);doc.text(fila[0],ficha.x+14,y);doc.setTextColor(0,0,0);doc.setFontSize(i===4?15:9);doc.text(String(fila[1]).toUpperCase().slice(0,32),ficha.x+14,y+15);doc.setFontSize(8);doc.setDrawColor(190,200,208);doc.line(ficha.x+14,y+23,ficha.x+ficha.w-14,y+23);});
+    doc.setFontSize(9);doc.setTextColor(0,0,0);doc.text('RESUMEN DE ESTRATOS',ficha.x+14,ficha.y+401);let y=ficha.y+420;resumen.forEach(x=>{doc.text(`${x.estrato} · ${nombreEstrato(x.estrato)}`,ficha.x+16,y);doc.text(`${x.cantidad} (${Math.round(x.cantidad/total*100)}%)`,ficha.x+ficha.w-18,y,{align:'right'});y+=16;});doc.setFontSize(7);doc.setTextColor(85,96,108);doc.text('FISE · BonoGas · Reporte territorial',ficha.x+14,ficha.y+485);doc.save('MAPA_DE_ESTRATIFICACION_BONOGAS.pdf');$('estadoMapaEstratificacion').innerHTML='<b>PDF generado correctamente.</b>';
+  }
+  function prepararMapaEstratificacion(){
+    const modal=$('modalMapaEstratificacion');
+    $('bonogasEstratificationMapPdfBtn').onclick=async()=>{const estado=$('estadoMapaEstratificacion');try{estado.innerHTML='<b>Cargando manzanas urbanas del ZIP…</b>';await cargarDatosEstratificacionZip();actualizarOpcionesEstratificacion();modal.showModal();await iniciarMapaSeleccionEstratificacion();renderMapaEstratificacion();}catch(error){console.error(error);estado.innerHTML='<b>No se pudieron cargar los datos de estratificación.</b>';}};
+    $('cerrarMapaEstratificacion').onclick=()=>modal.close();modal.onclick=e=>{if(e.target===modal)modal.close();};
+    $('estratDepartamento').onchange=()=>{actualizarOpcionesEstratificacion('departamento');renderMapaEstratificacion();};$('estratProvincia').onchange=()=>{actualizarOpcionesEstratificacion('provincia');renderMapaEstratificacion();};['estratDistrito','estratEstrato','estratInstaladora','estratConcesionaria','estratFechaDesde','estratFechaHasta'].forEach(id=>$(id).onchange=renderMapaEstratificacion);
+    $('aplicarMapaEstratificacion').onclick=renderMapaEstratificacion;$('limpiarMapaEstratificacion').onclick=async()=>{['estratDepartamento','estratProvincia','estratDistrito','estratEstrato','estratInstaladora','estratConcesionaria','estratFechaDesde','estratFechaHasta'].forEach(id=>$(id).value='');actualizarOpcionesEstratificacion();await iniciarMapaSeleccionEstratificacion();renderMapaEstratificacion();};$('volverMapaEstratificacion').onclick=async()=>{['estratDepartamento','estratProvincia','estratDistrito'].forEach(id=>$(id).value='');actualizarOpcionesEstratificacion();await iniciarMapaSeleccionEstratificacion();renderMapaEstratificacion();};
+    $('descargarEstratificacionCsv').onclick=()=>{const filas=registrosEstratificacion().map(x=>({Departamento:x.departamento,Provincia:x.provincia||provinciaRegistro(x),Distrito:x.distrito,Estrato:x.estrato,Clasificación:nombreEstrato(x.estrato),'Empresa instaladora':x.instaladora,Suministro:x.numeroSuministro||x.suministro||'',Latitud:x.lat,Longitud:x.lng}));if(filas.length)exportarCsv(filas,'mapa_estratificacion_bonogas.csv');};$('generarMapaEstratificacionPdf').onclick=generarPdfEstratificacion;
+  }
   function iniciar(){
     mapa=L.map('mapaBonogas',{zoomControl:false}).setView([-10.6,-75.3],5);
     const panelMapa=document.querySelector('.mapa-panel');
@@ -760,6 +906,7 @@
     L.control.zoom({position:'bottomleft'}).addTo(mapa);
     bases.osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'});
     bases.topografico=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{attribution:'© OpenTopoMap'});
+    bases.satelite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'Imágenes © Esri'});
     baseActual=bases.osm.addTo(mapa);
     grupoMarcadores=L.markerClusterGroup({
       maxClusterRadius:65,
@@ -780,7 +927,7 @@
     capaManzanasFise=L.layerGroup();
     capaTematica=L.layerGroup();
     capaDibujo=L.layerGroup().addTo(mapa);
-    prepararFiltros();actualizarMapa(false);ajustarTablero();prepararGestion();prepararPacProyectos();prepararFiltrosReporte259();
+    prepararFiltros();actualizarMapa(false);ajustarTablero();prepararGestion();prepararPacProyectos();prepararFiltrosReporte259();prepararSubirCapaBonogas();prepararMapaEstratificacion();
 
     $('filtrosBonogas').addEventListener('submit',e=>{e.preventDefault();actualizarMapa(true);});
     $('filtrosBonogas').addEventListener('reset',()=>setTimeout(()=>{prepararFiltros();actualizarMapa(true);limpiarDibujo();},0));

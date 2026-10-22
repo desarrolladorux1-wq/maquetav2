@@ -442,6 +442,7 @@
   });
   elementos.panelMapas.addEventListener('change', function(evento){ if(!evento.target.matches('input[type="radio"]')) return; mapa.removeLayer(capaBaseActual); capaBaseActual=bases[evento.target.value].addTo(mapa); capaBaseActual.bringToBack(); });
   elementos.panelCapas.addEventListener('change', function(evento){
+    const base=evento.target.dataset.base;if(base){mapa.removeLayer(capaBaseActual);capaBaseActual=bases[base].addTo(mapa);capaBaseActual.bringToBack();document.querySelector('[name="mapaBaseMcter"][value="'+base+'"]').checked=true;return;}
     const estado=evento.target.dataset.estado; const capa=evento.target.dataset.capa;
     if(estado){ evento.target.checked ? estadosVisibles.add(estado) : estadosVisibles.delete(estado); actualizarMapa(false); }
     if(capa){ evento.target.checked ? capasExtraActivas.add(capa) : capasExtraActivas.delete(capa); const layer=capasExtra[capa]; if(layer){ evento.target.checked ? layer.addTo(mapa) : mapa.removeLayer(layer); } }

@@ -646,3 +646,34 @@ window.addEventListener('load', function () {
     }
   }))).observe(document.body, { childList: true, subtree: true });
 })();
+
+/* Selector común de índices para las vistas satelitales de los mapas. */
+(()=>{
+  /* La vista satelital pertenece a Mapas, nunca al panel Capas. */
+  document.querySelectorAll('[id*="panelCapas"] .opcion-satelite-unificada,[id*="panelCapas"] [data-indices-satelite]').forEach(nodo=>nodo.remove());
+  const crearIndices=(panel,etiqueta,indice)=>{
+    const bloque=document.createElement('section');
+    bloque.className='indices-satelite-unificado';bloque.dataset.indicesSatelite='';bloque.hidden=true;
+    bloque.innerHTML='<strong>Índices</strong><label><input type="radio" name="indiceSateliteComun'+indice+'" value="ndvi">NDVI</label><label><input type="radio" name="indiceSateliteComun'+indice+'" value="built-up">Built Up</label>';
+    etiqueta.insertAdjacentElement('afterend',bloque);
+    return bloque;
+  };
+  const panelesMapa=[...document.querySelectorAll('[id*="panelMapas"]')];
+  panelesMapa.forEach(panel=>{
+    if(panel.querySelector('input[value="satelite"]'))return;
+    const base=panel.querySelector('input[type="radio"]');
+    if(!base)return;
+    const etiqueta=document.createElement('label');
+    etiqueta.className='opcion-satelite-unificada';
+    etiqueta.innerHTML='<input type="radio" value="satelite"><i></i>Satélite<small>Imagen satelital del área seleccionada</small>';
+    const entrada=etiqueta.querySelector('input');entrada.name=base.name;entrada.dataset.selectorSatelite='true';
+    panel.append(etiqueta);
+  });
+  document.querySelectorAll('[id*="panelMapas"] [data-selector-satelite],[id*="panelMapas"] [data-base="satelite"],[id*="panelMapas"] input[value="satelite"]').forEach((entrada,indice)=>{
+    entrada.dataset.selectorSatelite='true';
+    const etiqueta=entrada.closest('label'),panel=etiqueta?.parentElement;
+    const indices=panel?.querySelector?.('[data-indices-satelite]')||(panel&&etiqueta?crearIndices(panel,etiqueta,indice):null);
+    const actualizar=()=>{if(indices)indices.hidden=!entrada.checked;};
+    panel?.querySelectorAll('input[type="radio"]').forEach(control=>control.addEventListener('change',actualizar));actualizar();
+  });
+})();

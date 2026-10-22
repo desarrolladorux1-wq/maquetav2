@@ -6,7 +6,7 @@
   <meta name="description" content="Plataforma Web GIS para proyectos de masificación">
   <title>Masificación | SATCONTROL</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="" crossorigin="anonymous">
-  <link rel="stylesheet" href="../../estilos_generales.css?v=20260902-1">
+  <link rel="stylesheet" href="../../estilos_generales.css?v=20261022-4">
   <link rel="stylesheet" href="../../estilos_asistente_ia.css?v=20260902-1">
 <link rel="stylesheet" href="estilos_masificacion.css?v=20260903-3">
 <link rel="stylesheet" href="../../temas.css?v=20260902-2">
@@ -100,6 +100,7 @@
               <strong>Mapas base</strong>
               <label><input type="radio" name="mapaBase" value="osm" checked>OpenStreetMap</label>
               <label><input type="radio" name="mapaBase" value="topografico">Topográfico</label>
+              <label class="opcion-satelite-unificada"><input type="radio" name="mapaBase" value="satelite" data-selector-satelite><i></i>Satélite<small>Imagen satelital del área seleccionada</small></label>
             </div>
             <div class="panel-flotante" id="panelCapas" hidden>
               <div class="grupo-capas" id="capasGenerales">
@@ -751,8 +752,8 @@ Que el Informe Técnico Legal recomienda aprobar la liquidación parcial a favor
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" integrity="" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js" integrity="" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" crossorigin="anonymous"></script>
-<script src="../../scripts_generales.js?v=20260831-1"></script>
-<script src="masificacion.js?v=20260903-5"></script>
+<script src="../../scripts_generales.js?v=20261022-5"></script>
+<script src="masificacion.js?v=20261022-2"></script>
   <script src="../../asistente_ia.js?v=20260813-3"></script>
 </body>
 </html>

@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-  <link rel="stylesheet" href="../../estilos_generales.css?v=20260828-2">
+  <link rel="stylesheet" href="../../estilos_generales.css?v=20261022-4">
   <link rel="stylesheet" href="../../estilos_asistente_ia.css?v=20260813-3">
-  <link rel="stylesheet" href="estilos_ahorro_gnv.css?v=20260828-12">
+  <link rel="stylesheet" href="estilos_ahorro_gnv.css?v=20261012-1">
 <link rel="stylesheet" href="../../temas.css?v=20260902-2">
 </head>
 <body class="pagina-ahorro-gnv">
@@ -64,7 +64,7 @@
         <div class="contenedor-filtros-gnv" id="contenedorFiltrosGnv">
           <span class="titulo-filtros-colapsados">Filtros de conversiones</span>
           <form class="filtros-gnv" id="filtrosGnv">
-            <label class="filtro"><span>Región / departamento</span><select id="filtroDepartamento"><option value="">Todos</option></select></label>
+            <label class="filtro"><span>Departamento</span><select id="filtroDepartamento"><option value="">Todos</option></select></label>
             <label class="filtro"><span>Provincia</span><select id="filtroProvincia"><option value="">Todas</option></select></label>
             <label class="filtro"><span>Distrito</span><select id="filtroDistrito"><option value="">Todos</option></select></label>
             <label class="filtro filtro-periodo"><span>Período (Desde - Hasta)</span><div><input id="filtroDesde" type="date" value="2026-01-01"><input id="filtroHasta" type="date" value="2026-12-31"></div></label>
@@ -78,6 +78,10 @@
         <div class="tablero-gnv">
           <section class="mapa-panel-gnv" aria-label="Mapa de conversiones agrupadas">
             <div id="mapaGnv"></div>
+            <form class="buscador-geografico-gnv" id="buscadorGeograficoGnv">
+              <label><span>UBICAR EN EL MAPA</span><input id="consultaGeograficaGnv" type="search" placeholder="Ubigeo, dirección o coordenadas"></label>
+              <button type="submit">Buscar</button><button type="button" id="activarPoligonoGnv">Polígono</button>
+            </form>
             <div class="controles-mapa-gnv">
               <button id="botonMapas" type="button" aria-expanded="false" aria-controls="panelMapas"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h3M11 12h9M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="13" cy="18" r="2"/></svg><span>Mapas</span></button>
               <button id="botonCapas" type="button" aria-expanded="false" aria-controls="panelCapas"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3-9 5 9 5 9-5-9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg><span>Capas</span></button>
@@ -87,11 +91,12 @@
               <strong>Mapas base</strong>
               <label><input type="radio" name="mapaBase" value="osm" checked> OpenStreetMap</label>
               <label><input type="radio" name="mapaBase" value="topografico"> Topográfico</label>
+              <label class="opcion-satelite-unificada"><input type="radio" name="mapaBase" value="satelite" data-selector-satelite><i></i>Satélite<small>Imagen satelital del área seleccionada</small></label>
             </div>
             <div class="panel-flotante-mapa panel-capas-gnv" id="panelCapas" hidden>
               <strong>Capas de conversiones</strong>
               <label><input id="capaTalleresGnv" type="checkbox" checked> Talleres autorizados</label>
-              <label><input id="capaGrifosGnv" type="checkbox" checked> Grifos GNV · tanqueo anormal</label>
+              <label><input id="capaGrifosGnv" type="checkbox" checked> Grifos GNV · actividad de tanqueo</label>
               <label><input type="checkbox" data-estado="Liquidada" checked> Liquidadas</label>
               <label><input type="checkbox" data-estado="Certificada" checked> Certificadas</label>
               <label><input type="checkbox" data-estado="En proceso" checked> En proceso</label>
@@ -108,8 +113,12 @@
                 <section class="item-principal-leyenda-gnv"><i class="simbolo-beneficiario-gnv">B</i><div><b>Beneficiarios</b><small>Conversiones Ahorro GNV</small></div></section>
                 <div class="subestados-leyenda-gnv"><span><i class="liquidada"></i>Liquidada</span><span><i class="certificada"></i>Certificada</span><span><i class="proceso"></i>En proceso</span></div>
                 <section class="item-principal-leyenda-gnv"><i class="simbolo-taller-gnv"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(2 3)" d="M14.7 6.4 18 3.1a4.5 4.5 0 0 1-5.8 5.7l-6.7 6.7a2.2 2.2 0 1 1-3.1-3.1l6.7-6.7A4.5 4.5 0 0 1 14.9 0l-3.3 3.3 3.1 3.1Z"/></svg></i><div><b>Talleres autorizados</b><small>Centros de conversión registrados</small></div></section>
-                <section class="item-principal-leyenda-gnv"><i class="simbolo-grifo-gnv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h9v18H5zM7.5 6h4M4 21h12M14 8h2l3 3v7a2 2 0 0 0 2 2V9l-2-2"/></svg></i><div><b>Grifos GNV</b><small>Monitoreo de tanqueo</small></div></section>
-                <div class="subestados-leyenda-gnv"><span><i class="normal"></i>Tanqueo normal</span><span><i class="observacion"></i>En observación</span><span><i class="alerta"></i>Alerta de tanqueo</span></div>
+                <section class="item-principal-leyenda-gnv"><i class="simbolo-grifo-gnv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h9v18H5zM7.5 6h4M4 21h12M14 8h2l3 3v7a2 2 0 0 0 2 2V9l-2-2"/></svg></i><div><b>Actividad de grifos GNV</b><small>Días desde la última recarga</small></div></section>
+                <div class="subestados-leyenda-gnv subestados-grifos-gnv">
+                  <span><i class="normal"></i><b>Tanqueo normal</b><small>0–15 días</small></span>
+                  <span><i class="observacion"></i><b>En observación</b><small>16–90 días</small></span>
+                  <span><i class="alerta"></i><b>Alerta de tanqueo</b><small>91 días a más</small></span>
+                </div>
               </div>
             </aside>
             <div class="contador-mapa-gnv" id="contadorMapa">0 conversiones visibles</div>
@@ -136,31 +145,15 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6v18h12V7l-4-4Z"/><path d="M14 3v4h4M12 11v7m-3-3 3 3 3-3"/></svg>
                 <span>Exportar reporte</span>
               </button>
-              <button class="boton-reporte-recargas-gnv" id="abrirReporteRecargasGnv" type="button">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16M8 16v-4m4 4V8m4 8v-6"/><path d="m7 8 4-3 4 2 4-4"/></svg>
-                <span><strong>Reporte de recargas</strong><small>Bono Provincia</small></span>
-              </button>
               <button class="boton-reglas-bono-gnv" id="abrirReglasBonoGnv" type="button" hidden>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 7.8 7.5 9.5 4.3-1.7 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="M9 12h6M12 9v6"/></svg>
                 <span><strong>Reglas de pérdida de bono</strong><small>Configuración exclusiva del administrador</small></span><b>Configurar</b>
               </button>
               <button class="boton-configuracion-movil-panel-gnv" id="abrirConfiguracionMovilGnv" type="button" hidden>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10 5h4M11 18.5h2"/><circle cx="18.5" cy="8.5" r="3.5"/><path d="M18.5 6.8v3.4M16.8 8.5h3.4"/></svg>
-                <span><strong>Configuración aplicativo móvil</strong><small>Administrar SMS y biometría facial</small></span>
+                <span><strong>Configuración aplicativo móvil</strong><small>Push, SMS de inscripción y biometría</small></span>
                 <b>Configurar</b>
               </button>
-              <section class="tarjeta-api-cofide-gnv" id="tarjetaApiCofideGnv" hidden aria-labelledby="tituloApiCofideGnv">
-                <header><div><h3 id="tituloApiCofideGnv">Interconexión API COFIDE</h3><p>Recaudos y financiamientos actualizados automáticamente.</p></div><span id="estadoApiCofideGnv">Conectado</span></header>
-                <div class="datos-api-cofide-gnv">
-                  <article><small>Plataforma</small><strong>Amazon COFIDE · API</strong></article>
-                  <article><small>Última sincronización</small><strong id="ultimaSincronizacionCofideGnv">Hoy · --:--:--</strong></article>
-                  <article><small>Modalidad</small><strong>Tiempo real</strong></article>
-                  <article><small>Procesamiento</small><strong id="procesamientoCofideGnv">1,248 registros</strong></article>
-                </div>
-                <div class="logs-api-cofide-gnv"><h4>Logs automáticos</h4><ol id="logsApiCofideGnv"></ol></div>
-                <p class="nota-api-cofide-gnv">Sin cargas XML ni horarios manuales de 8:30 a. m. o 5:15 p. m.</p>
-                <button class="sincronizar-api-cofide-gnv" id="sincronizarApiCofideGnv" type="button">Sincronizar ahora</button>
-              </section>
             </div>
             <section class="detalle-conversion-gnv" id="detalleConversionGnv" hidden></section>
           </aside>
@@ -177,8 +170,8 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
           </button>
         </div>
-          <label><span>Visualizar por</span><select id="graficaAgrupacion"><option value="mes">Mes</option><option value="anio">Año</option><option value="region">Región</option></select></label>
-          <label><span>Región</span><select id="graficaRegion"><option value="">Todas</option><option>Costa</option><option>Sierra</option><option>Selva</option></select></label>
+          <label><span>Visualizar por</span><select id="graficaAgrupacion"><option value="mes">Mes</option><option value="anio">Año</option><option value="departamento">Departamento</option></select></label>
+          <label><span>Departamento</span><select id="graficaRegion"><option value="">Todos</option><option>Lima</option><option>Arequipa</option><option>Cusco</option><option>Piura</option><option>La Libertad</option></select></label>
           <label><span>Tipo de combustible</span><select id="graficaCombustible"><option value="">Todos</option></select></label>
           <label><span>Número de cilindros</span><select id="graficaCilindros"><option value="">Todos</option></select></label>
           <label><span>Entidad financiera</span><select id="graficaEntidad"><option value="">Todas</option></select></label>
@@ -213,19 +206,21 @@
             <div class="leyenda-meta-real-gnv"><span><i class="meta"></i>Meta mensual</span><span><i class="real"></i>Resultado real</span></div>
           </section>
 
-          <section class="tarjeta-grafica-gnv grafica-ranking-gnv"><header><div><h2>Conversiones por región</h2><p>Principales ámbitos del período</p></div></header><div class="lista-barras-gnv" id="graficaRegiones"></div><div class="leyenda-grafica-gnv"><span><i class="verde"></i>Número de conversiones</span></div></section>
+          <section class="tarjeta-grafica-gnv grafica-ranking-gnv"><header><div><h2>Conversiones por departamento</h2><p>Principales ámbitos del período</p></div></header><div class="lista-barras-gnv" id="graficaRegiones"></div><div class="leyenda-grafica-gnv"><span><i class="verde"></i>Número de conversiones</span></div></section>
           <section class="tarjeta-grafica-gnv grafica-ranking-gnv"><header><div><h2>Tipo de combustible</h2><p>Combustible anterior a la conversión</p></div></header><div class="lista-barras-gnv" id="graficaCombustibles"></div><div class="leyenda-grafica-gnv"><span><i class="verde"></i>Vehículos convertidos</span></div></section>
           <section class="tarjeta-grafica-gnv grafica-ranking-gnv"><header><div><h2>Conversiones por cilindros</h2><p>Configuración instalada en los vehículos</p></div></header><div class="lista-barras-gnv" id="graficaPorCilindros"></div><div class="leyenda-grafica-gnv"><span><i class="verde"></i>Vehículos convertidos</span></div></section>
           <section class="tarjeta-grafica-gnv grafica-ranking-gnv"><header><div><h2>Entidad financiera</h2><p>Conversiones gestionadas por entidad</p></div></header><div class="lista-barras-gnv" id="graficaEntidades"></div><div class="leyenda-grafica-gnv"><span><i class="verde"></i>Operaciones financiadas</span></div></section>
 
-          <section class="tarjeta-grafica-gnv grafica-calor-recargas-gnv"><header><div><h2>Mapa de calor de recargas</h2><p>Intensidad de recargas agregada por ciudad y región</p></div><span id="totalRecargasGnv">0 recargas</span></header><div id="mapaCalorRecargasGnv" aria-label="Mapa de calor de recargas por ciudad"></div><div class="leyenda-calor-gnv"><span>Baja</span><i></i><span>Alta intensidad</span></div></section>
+          <section class="tarjeta-grafica-gnv grafica-calor-recargas-gnv"><header><div><h2>Mapa de calor de actividad</h2><p>Actividad agregada por ciudad y departamento</p></div><span id="totalRecargasGnv">0 registros</span></header><div id="mapaCalorRecargasGnv" aria-label="Mapa de calor de actividad por ciudad"></div><div class="leyenda-calor-gnv"><span>Baja</span><i></i><span>Alta intensidad</span></div></section>
 
           <section class="tarjeta-grafica-gnv grafica-pap-gnv">
-            <header><div><h2>Ejecución del PAP 2025</h2><p>Liquidaciones mensuales y avance acumulado · análisis al 18/08/2026</p></div></header>
+            <header><div><h2>Ejecución del PAP 2025</h2><p>Liquidaciones mensuales y avance acumulado · análisis al 18/08/2026</p></div><button id="abrirMontosPapGnv" type="button">Montos tope PAP</button></header>
             <div class="resumen-pap-gnv"><article><span>Monto PAP 2025</span><strong>S/ 185,907,000</strong></article><article><span>Liquidaciones</span><strong>S/ 117,319,728</strong></article><article><span>Saldo PAP 2025</span><strong>S/ 68,587,272</strong></article></div>
             <div class="grafico-svg-gnv" id="graficoPap2025Gnv"></div>
             <div class="leyenda-grafica-gnv"><span><i class="naranja"></i>Liquidado por mes</span><span><i class="celeste"></i>Monto acumulado</span></div>
           </section>
+
+          <section class="tarjeta-grafica-gnv tarjeta-ahorro-estimado-gnv"><header><div><h2>Ahorro estimado</h2><p>Comparativo GNV frente a gasolina premium.</p></div><span>Pendiente</span></header><div><strong>Fórmula pendiente de FISE / Osinergmin</strong><p>La maqueta está preparada para mostrar el ahorro mensual cuando se reciba la fórmula oficial.</p></div></section>
 
           <section class="tarjeta-grafica-gnv grafica-morosidad-gnv"><header><div><h2>Morosidad en tiempo real</h2><p>Cartera morosa por ámbito monitoreado</p></div><strong>S/ 14,900,000</strong><button id="abrirMorosidadGnv" type="button">Ver morosidad</button></header><div class="lista-barras-gnv" id="graficaMorosidad"></div></section>
         </div>
@@ -236,20 +231,20 @@
         <div class="rejilla-configuraciones-gnv">
           <article class="tarjeta-configuracion-admin-gnv movil">
             <div class="icono-configuracion-admin-gnv"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10 5h4M11 18.5h2"/><circle cx="18.5" cy="8.5" r="3.5"/><path d="M18.5 6.8v3.4M16.8 8.5h3.4"/></svg></div>
-            <div><small>APLICATIVO MÓVIL</small><h2>Configuración móvil</h2><p>Administre el envío de SMS y el acceso seguro mediante biometría facial.</p></div>
-            <ul><li>Códigos y alertas por SMS</li><li>Validación facial en equipos compatibles</li><li>Registro de la última actualización</li></ul>
+            <div><small>APLICATIVO MÓVIL</small><h2>Configuración móvil</h2><p>Administre notificaciones push, SMS de inscripción y el acceso seguro.</p></div>
+            <ul><li>Notificaciones push de cobranza</li><li>Bolsa SMS de inscripción: hasta 60,000</li><li>Registro de la última actualización</li></ul>
             <button id="configurarMovilDesdeAdminGnv" type="button">Abrir configuración</button>
           </article>
           <article class="tarjeta-configuracion-admin-gnv bono">
             <div class="icono-configuracion-admin-gnv"><svg viewBox="0 0 24 24"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 7.8 7.5 9.5 4.3-1.7 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="M9 12h6M12 9v6"/></svg></div>
-            <div><small>BONO PROVINCIA</small><h2>Reglas de pérdida de bono</h2><p>Defina los días de alerta y pérdida del beneficio, además de su ámbito territorial.</p></div>
-            <ul><li>Alerta preventiva por días sin recarga</li><li>Umbral automático de pérdida</li><li>Aplicación nacional, departamental o provincial</li></ul>
-            <button id="configurarReglasDesdeAdminGnv" type="button">Configurar reglas</button>
+            <div><small>PARÁMETROS DE MOROSIDAD</small><h2>Reglas por departamento</h2><p>Defina el margen de actualización y los umbrales de observación y mora.</p></div>
+            <ul><li>Margen de actualización: 15 días</li><li>Observado: hasta 90 días</li><li>Alerta / mora: más de 90 días</li></ul>
+            <button id="configurarReglasDesdeAdminGnv" type="button">Configurar parámetros</button>
           </article>
           <article class="tarjeta-configuracion-admin-gnv morosidad">
             <div class="icono-configuracion-admin-gnv"><svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M7 15l4-4 3 2 5-6"/><circle cx="19" cy="7" r="2"/></svg></div>
-            <div><small>MOROSIDAD Y MENSAJERÍA</small><h2>Envío automático de cobranza</h2><p>Notifique al beneficiario desde la primera cuota atrasada y supervise los envíos desde Administración.</p></div>
-            <ul><li>Activación desde una cuota vencida</li><li>Envío automático por SMS y correo</li><li>Revisión y reenvío administrativo</li></ul>
+            <div><small>MOROSIDAD Y MENSAJERÍA</small><h2>Alertas de cobranza</h2><p>Supervise días de atraso y notificaciones push desde Administración.</p></div>
+            <ul><li>Margen configurable por departamento</li><li>Notificación push al aplicativo móvil</li><li>Revisión y reenvío administrativo</li></ul>
             <button id="abrirGestionMorosidadAdminGnv" type="button">Administrar envíos</button>
           </article>
         </div>
@@ -282,7 +277,7 @@
       <div class="modal-cuerpo-gnv cuerpo-configuracion-movil-gnv">
         <aside class="aviso-administrador-movil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-5"/></svg><div><strong>Configuración exclusiva del administrador</strong><p>Los cambios se aplican a las funciones de acceso y comunicación del aplicativo móvil.</p></div></aside>
         <section class="opciones-configuracion-movil">
-          <article><i class="icono-config-sms"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 4V5Z"/><path d="M8 9h8M8 13h5"/></svg></i><div><h3>Uso de SMS</h3><p>Permite enviar códigos, alertas de cuotas y notificaciones administrativas por mensaje de texto.</p><small id="detalleSmsMovilGnv">Servicio habilitado para todos los usuarios.</small></div><label class="interruptor-config-gnv"><input id="habilitarSmsMovilGnv" type="checkbox"><span></span><b id="estadoSmsMovilGnv">Deshabilitado</b></label></article>
+          <article><i class="icono-config-sms"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 4V5Z"/><path d="M8 9h8M8 13h5"/></svg></i><div><h3>SMS para inscripción</h3><p>Activa mensajes de bienvenida y registro para nuevos usuarios del aplicativo.</p><small id="detalleSmsMovilGnv">0 de 60,000 SMS utilizados.</small></div><label class="interruptor-config-gnv"><input id="habilitarSmsMovilGnv" type="checkbox"><span></span><b id="estadoSmsMovilGnv">Deshabilitado</b></label></article>
           <article><i class="icono-config-biometria"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/><circle cx="12" cy="10" r="3"/><path d="M7.5 17c1.1-2.2 2.6-3.2 4.5-3.2s3.4 1 4.5 3.2"/></svg></i><div><h3>Biometría facial</h3><p>Habilita la validación facial para el acceso seguro y la confirmación de operaciones sensibles.</p><small id="detalleBiometriaMovilGnv">Acceso mediante contraseña y código de seguridad.</small></div><label class="interruptor-config-gnv"><input id="habilitarBiometriaMovilGnv" type="checkbox"><span></span><b id="estadoBiometriaMovilGnv">Deshabilitado</b></label></article>
         </section>
         <div class="resumen-configuracion-movil"><span>Última actualización</span><strong id="ultimaActualizacionMovilGnv">Sin cambios registrados</strong><span>Aplicación</span><strong>Ahorro GNV · Usuarios móviles</strong></div>
@@ -420,7 +415,7 @@
     <button class="modal-fondo-gnv" type="button" data-cerrar-modal="modalValidacionIaGnv" aria-label="Cerrar"></button>
     <section class="modal-contenido-gnv modal-validacion-ia-gnv" role="dialog" aria-modal="true" aria-labelledby="tituloValidacionIaGnv">
       <header class="modal-cabecera-gnv">
-        <div><small>ASISTENTE INTELIGENTE AHORRO GNV</small><h2 id="tituloValidacionIaGnv">Validación documental con IA</h2><p>Control preventivo de documentos escaneados y firmas antes de la revisión humana.</p></div>
+        <div><small>ASISTENTE INTELIGENTE AHORRO GNV</small><h2 id="tituloValidacionIaGnv">Validación documental con IA</h2><p>Revise anexos, casillas obligatorias y coincidencia de firma antes de la revisión humana.</p></div>
         <button type="button" data-cerrar-modal="modalValidacionIaGnv" aria-label="Cerrar">×</button>
       </header>
       <div class="modal-cuerpo-gnv">
@@ -434,10 +429,10 @@
           <div class="intro-validacion-ia-gnv"><span>IA</span><div><small>PASO 1 DE 3</small><h3>Carga de documentos del expediente</h3><p>Los archivos son opcionales en esta maqueta. Puedes continuar directamente para visualizar la validación demostrativa.</p></div></div>
           <div class="archivos-validacion-ia-gnv">
             <label><span><b>DNI escaneado</b><small id="nombreDniIaGnv">Ningún archivo seleccionado</small></span><strong>Seleccionar</strong><input id="archivoDniIaGnv" type="file" accept=".pdf,image/*"></label>
-            <label><span><b>Tarjeta de Identificación Vehicular (TIV)</b><small id="nombreTivIaGnv">Ningún archivo seleccionado</small></span><strong>Seleccionar</strong><input id="archivoTivIaGnv" type="file" accept=".pdf,image/*"></label>
-            <label class="firma-documento-ia-gnv"><span><b>Firma de respaldo</b><small id="nombreFirmaIaGnv">Ningún archivo seleccionado</small></span><strong>Seleccionar imagen de referencia</strong><input id="archivoFirmaIaGnv" type="file" accept="image/*"></label>
+            <label><span><b>Proforma, cronograma o declaración jurada</b><small id="nombreTivIaGnv">Ningún archivo seleccionado</small></span><strong>Seleccionar</strong><input id="archivoTivIaGnv" type="file" accept=".pdf,image/*"></label>
+            <label class="firma-documento-ia-gnv"><span><b>Formulario con firma</b><small id="nombreFirmaIaGnv">Ningún archivo seleccionado</small></span><strong>Seleccionar imagen de referencia</strong><input id="archivoFirmaIaGnv" type="file" accept="image/*"></label>
           </div>
-          <aside class="criterios-validacion-ia-gnv"><b>Criterios automáticos</b><span>Tipografía y zonas editadas</span><span>Numeración y estructura documental</span><span>Comparación biométrica de firma</span></aside>
+          <aside class="criterios-validacion-ia-gnv"><b>Criterios automáticos</b><span>Anexos completos y casillas marcadas</span><span>Estructura de proforma, cronograma y declaración</span><span>Comparación de firma DNI / formulario</span></aside>
           <p class="aviso-validacion-ia-gnv" id="avisoValidacionIaGnv" role="alert"></p>
           <footer class="acciones-modal-gnv"><button type="button" data-cerrar-modal="modalValidacionIaGnv">Cancelar</button><button class="principal" id="iniciarValidacionIaGnv" type="button">Continuar y validar con IA</button></footer>
         </section>
@@ -470,19 +465,18 @@
   <div class="modal-gnv" id="modalMorosidadGnv" hidden>
     <button class="modal-fondo-gnv" type="button" data-cerrar-modal="modalMorosidadGnv" aria-label="Cerrar"></button>
     <section class="modal-contenido-gnv modal-morosidad-gnv" role="dialog" aria-modal="true" aria-labelledby="tituloMorosidadGnv">
-      <header class="modal-cabecera-gnv"><div><small>ADMINISTRACIÓN · AHORRO GNV</small><h2 id="tituloMorosidadGnv">Morosidad y envíos automáticos</h2><p>Beneficiarios notificados desde la primera cuota atrasada.</p></div><button type="button" data-cerrar-modal="modalMorosidadGnv" aria-label="Cerrar">×</button></header>
+      <header class="modal-cabecera-gnv"><div><small>ADMINISTRACIÓN · AHORRO GNV</small><h2 id="tituloMorosidadGnv">Morosidad y alertas push</h2><p>Clasificación por días de atraso y configuración por departamento.</p></div><button type="button" data-cerrar-modal="modalMorosidadGnv" aria-label="Cerrar">×</button></header>
       <div class="modal-cuerpo-gnv">
         <section class="kpis-morosidad-gnv">
           <article><span>Total beneficiarios</span><strong>10</strong><small>Registros activos</small></article>
-          <article class="rojo"><span>Atrasados</span><strong>4</strong><small>Requieren gestión inmediata</small></article>
-          <article class="ambar"><span>Con mora</span><strong>3</strong><small>Seguimiento activo</small></article>
+          <article class="ambar"><span>Observados</span><strong>4</strong><small>Hasta 90 días de atraso</small></article>
+          <article class="rojo"><span>En mora</span><strong>3</strong><small>Más de 90 días de atraso</small></article>
           <article class="rojo"><span>Monto moroso total</span><strong>S/ 6,160.00</strong><small>Acumulado</small></article>
         </section>
-        <section class="resumen-semanal-gnv"><article><span>Semanas reportadas</span><strong>3</strong></article><article><span>Morosidad</span><strong>S/ 6,160.00</strong></article><article><span>Cobrado</span><strong>S/ 1,960.00</strong></article><article><span>Recargas</span><strong>32</strong></article></section>
-        <div class="tabla-semanal-gnv"><table><thead><tr><th>Semana</th><th>Vehículos</th><th>Morosidad</th><th>Abonos</th><th>Recargas</th></tr></thead><tbody><tr><td>Semana 27</td><td>2</td><td>S/ 1,120.00</td><td>S/ 700.00</td><td>5</td></tr><tr><td>Semana 28</td><td>4</td><td>S/ 1,960.00</td><td>S/ 840.00</td><td>12</td></tr><tr><td>Semana 29</td><td>4</td><td>S/ 3,080.00</td><td>S/ 420.00</td><td>15</td></tr></tbody></table></div>
-        <aside class="aviso-envio-automatico-gnv"><span>✓</span><div><strong>Envío automático activo</strong><p>La primera notificación se envía desde la primera cuota atrasada. Administración puede revisar el estado y reenviar el mensaje.</p></div></aside>
-        <div class="acciones-morosidad-gnv"><input id="buscarMorosoGnv" type="search" placeholder="Buscar por nombre o placa"><select id="estadoMorosoGnv"><option value="">Todos los estados</option><option>Atrasado</option><option>Con mora</option><option>Al día</option></select><button id="mensajeTodosGnv" type="button">Reenviar desde Administración</button></div>
-        <div class="tabla-morosidad-gnv"><table><thead><tr><th>Placa</th><th>Beneficiario</th><th>Taller</th><th>Cuotas atrasadas</th><th>Monto atrasado</th><th>Estado</th><th>Mensaje enviado</th><th>Acción</th></tr></thead><tbody id="tablaMorosidadGnv"></tbody></table></div>
+        <section class="resumen-semanal-gnv"><article><span>Margen de actualización</span><strong>15 días</strong></article><article><span>Observado</span><strong>16–90 días</strong></article><article><span>En mora</span><strong>+90 días</strong></article><article><span>Ámbito</span><strong>Por departamento</strong></article></section>
+        <aside class="aviso-envio-automatico-gnv"><span>✓</span><div><strong>Notificación push activa</strong><p>Administración puede revisar y reenviar avisos al aplicativo móvil; los SMS se reservan para inscripción.</p></div></aside>
+        <div class="acciones-morosidad-gnv"><input id="buscarMorosoGnv" type="search" placeholder="Buscar por nombre o placa"><select id="estadoMorosoGnv"><option value="">Todos los estados</option><option>Observado</option><option>En mora</option><option>Al día</option></select><button id="mensajeTodosGnv" type="button">Reenviar push</button></div>
+        <div class="tabla-morosidad-gnv"><table><thead><tr><th>Placa</th><th>Beneficiario</th><th>Taller</th><th>Días de atraso</th><th>Monto atrasado</th><th>Estado</th><th>Push enviado</th><th>Acción</th></tr></thead><tbody id="tablaMorosidadGnv"></tbody></table></div>
         <footer class="paginacion-gnv"><span id="resumenPaginaMorosidad"></span><div><button id="paginaAnteriorMorosidad" type="button">â€¹ Anterior</button><span id="numerosPaginaMorosidad"></span><button id="paginaSiguienteMorosidad" type="button">Siguiente â€º</button></div></footer>
       </div>
     </section>
@@ -491,10 +485,10 @@
   <div class="modal-gnv" id="modalMensajeGnv" hidden>
     <button class="modal-fondo-gnv" type="button" data-cerrar-modal="modalMensajeGnv" aria-label="Cerrar"></button>
     <section class="modal-contenido-gnv modal-mensaje-gnv" role="dialog" aria-modal="true" aria-labelledby="tituloMensajeGnv">
-      <header class="modal-cabecera-gnv"><div><h2 id="tituloMensajeGnv">Mensaje administrativo de cobranza</h2><p>Vista previa del aviso automático generado desde la primera cuota atrasada.</p></div><button type="button" data-cerrar-modal="modalMensajeGnv" aria-label="Cerrar">×</button></header>
+      <header class="modal-cabecera-gnv"><div><h2 id="tituloMensajeGnv">Notificación push de cobranza</h2><p>Vista previa del aviso enviado al aplicativo móvil según los días de atraso.</p></div><button type="button" data-cerrar-modal="modalMensajeGnv" aria-label="Cerrar">×</button></header>
       <div class="modal-cuerpo-gnv">
         <section class="destinatario-mensaje-gnv"><div><span>Beneficiario</span><strong id="mensajeBeneficiarioGnv">Todos los beneficiarios con mora</strong></div><div><span>Placa</span><strong id="mensajePlacaGnv">Envío masivo</strong></div><div><span>Monto atrasado</span><strong id="mensajeMontoGnv">Según registro</strong></div><div><span>Cuotas atrasadas</span><strong id="mensajeCuotasGnv">Según registro</strong></div></section>
-        <div class="configuracion-mensaje-gnv"><label><span>Plantilla</span><select id="plantillaMensajeGnv"><option>Primera cuota atrasada</option><option>Recordatorio de pago</option><option>Seguimiento preventivo</option></select></label><fieldset><legend>Canales automáticos</legend><label><input type="checkbox" checked> Correo</label><label><input type="checkbox" checked> SMS</label></fieldset></div>
+        <div class="configuracion-mensaje-gnv"><label><span>Plantilla</span><select id="plantillaMensajeGnv"><option>Alerta por días de atraso</option><option>Recordatorio de pago</option><option>Seguimiento preventivo</option></select></label><fieldset><legend>Canal automático</legend><label><input type="checkbox" checked> Notificación push</label></fieldset></div>
         <label class="editor-mensaje-gnv"><span>Mensaje</span><textarea id="textoMensajeGnv"></textarea></label>
         <footer class="acciones-modal-gnv"><button type="button" data-cerrar-modal="modalMensajeGnv">Cancelar</button><button id="enviarMensajeGnv" class="principal" type="button">Enviar mensaje</button></footer>
       </div>
@@ -518,46 +512,27 @@
     </section>
   </div>
 
-  <div class="modal-gnv" id="modalReporteRecargasGnv" hidden>
-    <button class="modal-fondo-gnv" type="button" data-cerrar-modal="modalReporteRecargasGnv" aria-label="Cerrar"></button>
-    <section class="modal-contenido-gnv modal-reporte-recargas-gnv" role="dialog" aria-modal="true" aria-labelledby="tituloReporteRecargasGnv">
-      <header class="cabecera-reporte-recargas-gnv">
-        <div><small>AHORRO GNV</small><h2 id="tituloReporteRecargasGnv">Reporte de recargas y Bono Provincia</h2><p>Monitoreo semanal por departamento, provincia y grifo.</p></div>
-        <button type="button" data-cerrar-modal="modalReporteRecargasGnv" aria-label="Cerrar">×</button>
-      </header>
-      <div class="cuerpo-reporte-recargas-gnv">
-        <form class="filtros-reporte-recargas-gnv" id="filtrosReporteRecargasGnv">
-          <label><span>Semana</span><select id="reporteSemanaGnv"><option value="">Todas</option></select></label>
-          <label><span>Departamento</span><select id="reporteDepartamentoGnv"><option value="">Todos</option></select></label>
-          <label><span>Provincia / ciudad</span><select id="reporteProvinciaGnv"><option value="">Todas</option></select></label>
-          <label><span>Estado</span><select id="reporteEstadoGnv"><option value="">Todos</option><option>Vigente</option><option>En riesgo</option><option>Bono perdido</option></select></label>
-        </form>
-        <section class="kpis-reporte-recargas-gnv">
-          <article><span>Vehículos</span><strong id="kpiVehiculosRecargasGnv">0</strong><small>Registros filtrados</small></article>
-          <article><span>Recargas</span><strong id="kpiRecargasGnv">0</strong><small>Operaciones semanales</small></article>
-          <article class="alerta"><span>Bono perdido</span><strong id="kpiBonoPerdidoGnv">0</strong><small>Más de 30 días sin recarga</small></article>
-          <article><span>En riesgo</span><strong id="kpiRiesgoRecargasGnv">0</strong><small>Seguimiento preventivo</small></article>
-        </section>
-        <div class="tabla-reporte-recargas-gnv"><table><thead><tr><th>Semana</th><th>Placa</th><th>Departamento</th><th>Provincia / grifo</th><th>Recargas</th><th>Volumen</th><th>Días sin recarga</th><th>Estado</th></tr></thead><tbody id="tablaReporteRecargasGnv"></tbody></table></div>
-        <div class="paginacion-reporte-recargas-gnv"><span id="resumenPaginacionRecargasGnv">Mostrando 0 registros</span><div><button id="anteriorRecargasGnv" type="button">Anterior</button><strong id="paginaRecargasGnv">Página 1 de 1</strong><button id="siguienteRecargasGnv" type="button">Siguiente</button></div></div>
-      </div>
-      <footer class="pie-reporte-recargas-gnv"><button id="exportarRecargasCsvGnv" type="button">Exportar CSV</button><button class="principal" type="button" data-cerrar-modal="modalReporteRecargasGnv">Cerrar</button></footer>
+  <div class="modal-gnv" id="modalMontosPapGnv" hidden>
+    <button class="modal-fondo-gnv" type="button" data-cerrar-modal="modalMontosPapGnv" aria-label="Cerrar"></button>
+    <section class="modal-contenido-gnv modal-montos-pap-gnv" role="dialog" aria-modal="true" aria-labelledby="tituloMontosPapGnv">
+      <header class="modal-cabecera-gnv"><div><small>ADMINISTRACIÓN · AHORRO GNV</small><h2 id="tituloMontosPapGnv">Montos tope PAP</h2><p>Consulta visual de vigencia e historial de proformas aplicables.</p></div><button type="button" data-cerrar-modal="modalMontosPapGnv" aria-label="Cerrar">×</button></header>
+      <div class="modal-cuerpo-gnv"><div class="filtros-montos-pap-gnv"><label>Departamento<select><option>Todos los departamentos</option><option>Lima</option><option>Arequipa</option><option>Cusco</option></select></label><label>Estado<select><option>Vigentes</option><option>No vigentes</option></select></label></div><div class="tabla-montos-pap-gnv"><table><thead><tr><th>PAP</th><th>Departamento</th><th>Monto tope</th><th>Vigencia</th><th>Estado</th></tr></thead><tbody><tr><td>PAP-2026-01</td><td>Lima</td><td>S/ 4,200</td><td>01/01/2026 – vigente</td><td><span>Vigente</span></td></tr><tr><td>PAP-2025-04</td><td>Arequipa</td><td>S/ 4,050</td><td>01/07/2025 – 31/12/2025</td><td><span>No vigente</span></td></tr><tr><td>PAP-2026-02</td><td>Cusco</td><td>S/ 4,350</td><td>01/02/2026 – vigente</td><td><span>Vigente</span></td></tr></tbody></table></div><aside class="historial-montos-pap-gnv"><strong>Historial de cambios</strong><p>La proforma aplicable se identifica por departamento, fecha de vigencia y condición del bono.</p></aside></div>
     </section>
   </div>
 
   <div class="modal-gnv" id="modalReglasBonoGnv" hidden>
     <button class="modal-fondo-gnv" type="button" data-cerrar-modal="modalReglasBonoGnv" aria-label="Cerrar"></button>
     <section class="modal-contenido-gnv modal-reglas-bono-gnv" role="dialog" aria-modal="true" aria-labelledby="tituloReglasBonoGnv">
-      <header class="modal-cabecera-gnv"><div><small>ADMINISTRACIÓN · AHORRO GNV</small><h2 id="tituloReglasBonoGnv">Reglas de pérdida de Bono Provincia</h2><p>Configure cuándo y dónde se aplicará la pérdida del beneficio por falta de recargas.</p></div><button type="button" data-cerrar-modal="modalReglasBonoGnv" aria-label="Cerrar">×</button></header>
+      <header class="modal-cabecera-gnv"><div><small>ADMINISTRACIÓN · AHORRO GNV</small><h2 id="tituloReglasBonoGnv">Parámetros de morosidad</h2><p>Configure días de actualización y estados de morosidad por departamento.</p></div><button type="button" data-cerrar-modal="modalReglasBonoGnv" aria-label="Cerrar">×</button></header>
       <form class="modal-cuerpo-gnv formulario-reglas-bono-gnv" id="formularioReglasBonoGnv">
-        <label class="interruptor-regla-bono-gnv"><input id="reglaBonoActivaGnv" type="checkbox" checked><span></span><div><strong>Regla activa</strong><small>Clasifica automáticamente los registros que cumplen estas condiciones.</small></div></label>
+        <label class="interruptor-regla-bono-gnv"><input id="reglaBonoActivaGnv" type="checkbox" checked><span></span><div><strong>Parámetros activos</strong><small>Clasifican los estados según los días de atraso configurados.</small></div></label>
         <section class="campos-reglas-bono-gnv">
-          <label><span>Alerta preventiva desde</span><div><input id="reglaDiasRiesgoGnv" type="number" min="1" max="364" value="21" required><small>días sin recarga</small></div></label>
-          <label><span>Pérdida del bono después de</span><div><input id="reglaDiasPerdidaGnv" type="number" min="2" max="365" value="30" required><small>días sin recarga</small></div></label>
+          <label><span>Margen de actualización</span><div><input id="reglaDiasRiesgoGnv" type="number" min="1" max="90" value="15" required><small>días</small></div></label>
+          <label><span>Mora desde</span><div><input id="reglaDiasPerdidaGnv" type="number" min="16" max="365" value="90" required><small>días de atraso</small></div></label>
           <label><span>Departamento</span><select id="reglaDepartamentoGnv"><option value="">Todo el país</option></select></label>
           <label><span>Provincia</span><select id="reglaProvinciaGnv" disabled><option value="">Todas las provincias</option></select></label>
         </section>
-        <aside class="resumen-regla-bono-gnv"><span>i</span><p id="resumenReglaBonoGnv">El bono se perderá con más de 30 días sin recarga en todo el país.</p></aside>
+        <aside class="resumen-regla-bono-gnv"><span>i</span><p id="resumenReglaBonoGnv">Los casos con hasta 90 días se visualizarán como observados; desde 91 días, en mora.</p></aside>
         <div class="auditoria-regla-bono-gnv"><span>Última actualización</span><strong id="actualizacionReglaBonoGnv">Configuración predeterminada</strong></div>
         <footer class="acciones-modal-gnv"><button type="button" data-cerrar-modal="modalReglasBonoGnv">Cancelar</button><button class="principal" type="submit">Guardar reglas</button></footer>
       </form>
@@ -567,9 +542,9 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-<script src="../../scripts_generales.js?v=20260831-1"></script>
+<script src="../../scripts_generales.js?v=20261022-5"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="ahorro_gnv.js?v=20260903-1"></script>
+  <script src="ahorro_gnv.js?v=20261022-2"></script>
   <script src="../../asistente_ia.js?v=20260813-3"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
   <title>Electricidad al Toque | SATCONTROL</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-  <link rel="stylesheet" href="../../estilos_generales.css?v=20260828-2">
+<link rel="stylesheet" href="../../estilos_generales.css?v=20261022-4">
   <link rel="stylesheet" href="../../estilos_asistente_ia.css?v=20260813-3">
   <link rel="stylesheet" href="../MCTER/estilos_mcter.css?v=20260817-16">
   <link rel="stylesheet" href="estilos_electricidad.css?v=20260907-3">
@@ -43,7 +43,7 @@
               <button id="botonCapasEat" type="button" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3-9 5 9 5 9-5-9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg>Capas</button>
               <button id="botonTematicosEat" type="button" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.5 16.5c1.2-1.9 1.7-4.2 1.7-6.5a3.8 3.8 0 0 1 7.6 0c0 2.3.5 4.6 1.7 6.5"/><path d="M5 17h14M9.5 20h5"/><circle cx="12" cy="6" r="1"/></svg>Temáticos</button>
             </div>
-            <div class="panel-capa-mcter panel-mapas-mcter" id="panelMapasEat" hidden><strong>Mapas</strong><label><input type="radio" name="baseEat" value="osm" checked>OSM</label><label><input type="radio" name="baseEat" value="topografico">Topográfico</label></div>
+            <div class="panel-capa-mcter panel-mapas-mcter" id="panelMapasEat" hidden><strong>Mapas</strong><label><input type="radio" name="baseEat" value="osm" checked>OSM</label><label><input type="radio" name="baseEat" value="topografico">Topográfico</label><label class="opcion-satelite-unificada"><input type="radio" name="baseEat" value="satelite" data-selector-satelite><i></i>Satélite<small>Imagen satelital del área seleccionada</small></label></div>
             <div class="panel-capa-mcter panel-capas-mcter" id="panelCapasEat" hidden><strong>Beneficiarios</strong><label><input type="checkbox" data-estado="Operativo" checked><i class="operativo"></i>Mostrar operativos</label><label><input type="checkbox" data-estado="Observado" checked><i class="observado"></i>Mostrar observados</label><label><input type="checkbox" data-estado="Inactivo" checked><i class="inactivo"></i>Mostrar inactivos</label><hr><label><input type="checkbox" data-capa="hogares">Capa de hogares sin electricidad</label><label><input type="checkbox" data-capa="concesiones">Mapa de concesiones</label></div>
             <div class="panel-capa-mcter panel-tematicos-mcter panel-tematicos-eat" id="panelTematicosEat" hidden><small>MAPAS TEMÁTICOS</small><strong>Montos desembolsados</strong><label class="opcion-calor-eat"><input type="checkbox" id="activarCalorDesembolsosEat">Mapa de calor por zona</label><p>La intensidad representa el monto acumulado desembolsado en cada zona.</p><div class="leyenda-calor-eat"><span>Menor</span><i></i><span>Mayor</span></div></div>
             <div class="contador-mcter" id="contadorEat">5,395 beneficiarios visibles</div>
@@ -77,6 +77,6 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
-<script src="../../scripts_generales.js?v=20260831-1"></script><script src="../../asistente_ia.js?v=20260813-3"></script><script src="electricidad-al-toque.js?v=20260907-4"></script>
+<script src="../../scripts_generales.js?v=20261022-5"></script><script src="../../asistente_ia.js?v=20260813-3"></script><script src="electricidad-al-toque.js?v=20261022-2"></script>
 </body>
 </html>

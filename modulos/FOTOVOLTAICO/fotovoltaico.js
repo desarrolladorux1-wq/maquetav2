@@ -100,7 +100,7 @@
   function alternar(panel,boton){const abrir=panel.hidden;[$('panelMapasEat'),$('panelCapasEat')].forEach(p=>p.hidden=true);[$('botonMapasEat'),$('botonCapasEat')].forEach(b=>b.setAttribute('aria-expanded','false'));panel.hidden=!abrir;boton.setAttribute('aria-expanded',String(abrir))}
   $('botonMapasEat').onclick=()=>alternar($('panelMapasEat'),$('botonMapasEat'));$('botonCapasEat').onclick=()=>alternar($('panelCapasEat'),$('botonCapasEat'));
   $('panelMapasEat').onchange=e=>{if(!e.target.matches('input[type=radio]'))return;mapa.removeLayer(capaBase);capaBase=bases[e.target.value].addTo(mapa);capaBase.bringToBack()};
-  $('panelCapasEat').onchange=e=>{const estado=e.target.dataset.estado,capa=e.target.dataset.capa;if(estado){e.target.checked?estadosVisibles.add(estado):estadosVisibles.delete(estado);actualizar(false)}if(capa){e.target.checked?extrasActivas.add(capa):extrasActivas.delete(capa);const l=extras[capa];if(l)e.target.checked?l.addTo(mapa):mapa.removeLayer(l)}};
+  $('panelCapasEat').onchange=e=>{const estado=e.target.dataset.estado,capa=e.target.dataset.capa,base=e.target.dataset.base;if(base){mapa.removeLayer(capaBase);capaBase=bases[base].addTo(mapa);capaBase.bringToBack();const selectorBase=document.querySelector('[name="baseEat"][value="'+base+'"]');if(selectorBase)selectorBase.checked=true;return}if(estado){e.target.checked?estadosVisibles.add(estado):estadosVisibles.delete(estado);actualizar(false)}if(capa){e.target.checked?extrasActivas.add(capa):extrasActivas.delete(capa);const l=extras[capa];if(l)e.target.checked?l.addTo(mapa):mapa.removeLayer(l)}};
   $('filtrosEat').onsubmit=e=>{e.preventDefault();actualizar()};$('buscarCodigoEat').oninput=()=>actualizar(false);$('cerrarFichaEat').onclick=cerrarFichaFotovoltaico;$('restablecerFotovoltaico').onclick=restablecerFotovoltaico;
   const tarjetaObservados=$('observadosEat').closest('article');
   tarjetaObservados.classList.add('tarjeta-observados-consulta');tarjetaObservados.tabIndex=0;tarjetaObservados.setAttribute('role','button');tarjetaObservados.setAttribute('aria-label','Ver paneles observados');
@@ -215,5 +215,5 @@
     $('resultadoAsignacionMultiplePfv').textContent=`${encontrados.length} panel(es) asignados a ${persona.nombre}.${noEncontrados.length?` No encontrados: ${noEncontrados.join(', ')}.`:''}`;
   },true);
   document.addEventListener('keydown',evento=>{if(evento.key!=='Escape')return;evento.preventDefault();cerrarFichaFotovoltaico();$('panelMapasEat').hidden=true;$('panelCapasEat').hidden=true;document.querySelectorAll('dialog[open]').forEach(modal=>modal.close());mapa.setView([-9.2,-75.2],5)});
-  iniciar();posicionar();
+  iniciar();bases.satelite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'Imágenes &copy; Esri'});posicionar();
 })();

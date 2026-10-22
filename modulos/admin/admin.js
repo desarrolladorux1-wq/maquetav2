@@ -1435,6 +1435,7 @@
     estado.mapa = L.map('mapaAdmin', { center: [-9.3, -75.2], zoom: 5, minZoom: 4, preferCanvas: true });
     estado.capasBase.osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' });
     estado.capasBase.topografico = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '&copy; OpenTopoMap' });
+    estado.capasBase.satelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, attribution: 'Imágenes &copy; Esri' });
     estado.capaBase = estado.capasBase.osm.addTo(estado.mapa);
     estado.capaAnalisis = L.layerGroup().addTo(estado.mapa);
     estado.mapa.doubleClickZoom.disable();

@@ -6,7 +6,7 @@
   <title>Fotovoltaico | SATCONTROL</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-  <link rel="stylesheet" href="../../estilos_generales.css?v=20260828-2">
+<link rel="stylesheet" href="../../estilos_generales.css?v=20261022-4">
   <link rel="stylesheet" href="../../estilos_asistente_ia.css?v=20260813-3">
   <link rel="stylesheet" href="../MCTER/estilos_mcter.css?v=20260817-16">
 <link rel="stylesheet" href="estilos_fotovoltaico.css?v=20261009-1">
@@ -43,7 +43,7 @@
               <button id="botonMapasEat" type="button" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h3M11 12h9M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="13" cy="18" r="2"/></svg>Mapas</button>
               <button id="botonCapasEat" type="button" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="m12 3-9 5 9 5 9-5-9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg>Capas</button>
             </div>
-            <div class="panel-capa-mcter panel-mapas-mcter" id="panelMapasEat" hidden><strong>Mapas</strong><label><input type="radio" name="baseEat" value="osm" checked>OSM</label><label><input type="radio" name="baseEat" value="topografico">Topográfico</label></div>
+            <div class="panel-capa-mcter panel-mapas-mcter" id="panelMapasEat" hidden><strong>Mapas</strong><label><input type="radio" name="baseEat" value="osm" checked>OSM</label><label><input type="radio" name="baseEat" value="topografico">Topográfico</label><label class="opcion-satelite-unificada"><input type="radio" name="baseEat" value="satelite" data-selector-satelite><i></i>Satélite<small>Imagen satelital del área seleccionada</small></label></div>
             <div class="panel-capa-mcter panel-capas-mcter" id="panelCapasEat" hidden><strong>Sistemas</strong><label><input type="checkbox" data-estado="Operativo" checked><i class="operativo"></i>Mostrar operativos</label><label><input type="checkbox" data-estado="Observado" checked><i class="observado"></i>Mostrar observados</label><label><input type="checkbox" data-estado="Inactivo" checked><i class="inactivo"></i>Mostrar inactivos</label></div>
             <div class="contador-mcter" id="contadorEat">200 sistemas visibles</div>
           </section>
@@ -73,6 +73,6 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-<script src="../../scripts_generales.js?v=20260831-1"></script><script src="../../asistente_ia.js?v=20260813-3"></script><script src="fotovoltaico.js?v=20261009-1"></script>
+<script src="../../scripts_generales.js?v=20261022-5"></script><script src="../../asistente_ia.js?v=20260813-3"></script><script src="fotovoltaico.js?v=20261022-2"></script>
 </body>
 </html>

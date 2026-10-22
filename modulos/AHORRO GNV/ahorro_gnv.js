@@ -2,7 +2,7 @@
   'use strict';
   const $=id=>document.getElementById(id);
   const coloresEstado={Liquidada:'#4db77e',Certificada:'#557fe1','En proceso':'#e69a13'};
-  let registros=[],visibles=[],mapa,baseActual,grupoMarcadores,grupoTalleresGnv,grupoGrifosGnv,capaCalor,mapaCalorGraficasGnv,capaRecargasGnv,modoTematico=false,paginaMorosidad=1,paginaReporteRecargas=1,seleccionActual=null,observadorMapaGnv;
+  let registros=[],visibles=[],mapa,baseActual,grupoMarcadores,grupoTalleresGnv,grupoGrifosGnv,capaCalor,mapaCalorGraficasGnv,capaRecargasGnv,modoTematico=false,paginaMorosidad=1,seleccionActual=null,observadorMapaGnv;
   let herramientaActiva=null,puntosHerramienta=[],centroCirculo=null,capaHerramienta=null,guiaHerramienta=null,arrastreHerramientas=null;
   let firmaDibujadaGnv=false,trazandoFirmaGnv=false,firmaInformeDibujadaGnv=false,trazandoFirmaInformeGnv=false;
   let correlativoInformeGnv=45,documentosGeneradosGnv=18,destinatarioMensajeActual=null;
@@ -17,18 +17,18 @@
     {id:'GRF-009',nombre:'Grifo Cusco Sur',direccion:'Av. de la Cultura 2950',distrito:'San Sebastián',provincia:'Cusco',departamento:'Cusco',lat:-13.5358,lng:-71.9324,nivel:'observacion',estado:'En observación',placas:[{placa:'X8C-521',detalle:'Cambio inusual del punto habitual de recarga'}]}
   ];
   const morosos=[
-    {placa:'ABC-123',beneficiario:'Carlos Quispe Huamaní',taller:'AutoGas Norte S.A.C.',cuotas:3,monto:840,estado:'Atrasado'},
-    {placa:'DEF-456',beneficiario:'María Torres Flores',taller:'GNV Conversiones E.I.R.L.',cuotas:1,monto:280,estado:'Con mora'},
-    {placa:'GHI-789',beneficiario:'Luis Paredes Vega',taller:'Taller Central GNV S.A.C.',cuotas:0,monto:0,estado:'Al día'},
-    {placa:'JKL-012',beneficiario:'Rosa Mamani Ccori',taller:'Mecánica Trujillo GNV',cuotas:5,monto:1400,estado:'Atrasado'},
-    {placa:'MNO-345',beneficiario:'Jorge Salazar Ríos',taller:'AGN Ingenieros',cuotas:2,monto:560,estado:'Con mora'},
-    {placa:'PQR-678',beneficiario:'Elena Vargas Soto',taller:'Rufigas VES',cuotas:4,monto:1120,estado:'Atrasado'},
-    {placa:'STU-901',beneficiario:'Miguel Condori Luna',taller:'Autogas Jireh',cuotas:0,monto:0,estado:'Al día'},
-    {placa:'VWX-234',beneficiario:'Ana López Peña',taller:'GM Conversiones',cuotas:2,monto:560,estado:'Con mora'},
-    {placa:'YZA-567',beneficiario:'Pedro Huamán Díaz',taller:'Corporación Perú Gas',cuotas:5,monto:1400,estado:'Atrasado'},
-    {placa:'BCD-890',beneficiario:'Lucía Ramos Poma',taller:'Taller Sur GNV',cuotas:0,monto:0,estado:'Al día'}
+    {placa:'ABC-123',beneficiario:'Carlos Quispe Huamaní',taller:'AutoGas Norte S.A.C.',dias:48,monto:840,estado:'Observado'},
+    {placa:'DEF-456',beneficiario:'María Torres Flores',taller:'GNV Conversiones E.I.R.L.',dias:112,monto:280,estado:'En mora'},
+    {placa:'GHI-789',beneficiario:'Luis Paredes Vega',taller:'Taller Central GNV S.A.C.',dias:0,monto:0,estado:'Al día'},
+    {placa:'JKL-012',beneficiario:'Rosa Mamani Ccori',taller:'Mecánica Trujillo GNV',dias:95,monto:1400,estado:'En mora'},
+    {placa:'MNO-345',beneficiario:'Jorge Salazar Ríos',taller:'AGN Ingenieros',dias:23,monto:560,estado:'Observado'},
+    {placa:'PQR-678',beneficiario:'Elena Vargas Soto',taller:'Rufigas VES',dias:76,monto:1120,estado:'Observado'},
+    {placa:'STU-901',beneficiario:'Miguel Condori Luna',taller:'Autogas Jireh',dias:0,monto:0,estado:'Al día'},
+    {placa:'VWX-234',beneficiario:'Ana López Peña',taller:'GM Conversiones',dias:18,monto:560,estado:'Observado'},
+    {placa:'YZA-567',beneficiario:'Pedro Huamán Díaz',taller:'Corporación Perú Gas',dias:126,monto:1400,estado:'En mora'},
+    {placa:'BCD-890',beneficiario:'Lucía Ramos Poma',taller:'Taller Sur GNV',dias:0,monto:0,estado:'Al día'}
   ];
-  morosos.forEach((x,i)=>{x.mensajeEnviado=x.cuotas>=1;x.ultimoEnvio=x.mensajeEnviado?`${i%2?'Hoy':'Ayer'} · ${String(8+i).padStart(2,'0')}:15`:'';x.canalEnvio=x.mensajeEnviado?'SMS + correo':''});
+  morosos.forEach((x,i)=>{x.mensajeEnviado=x.dias>15;x.ultimoEnvio=x.mensajeEnviado?`${i%2?'Hoy':'Ayer'} · ${String(8+i).padStart(2,'0')}:15`:'';x.canalEnvio=x.mensajeEnviado?'Notificación push':''});
 
   const unicos=(campo,lista=registros)=>[...new Set(lista.map(x=>x[campo]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'es'));
   const regionDeDepartamento=departamento=>({Lima:'Costa',Callao:'Costa',Ica:'Costa','La Libertad':'Costa',Piura:'Costa','Áncash':'Costa',Arequipa:'Costa',Cusco:'Sierra','Junín':'Sierra',Cajamarca:'Sierra'}[departamento]||'Selva');
@@ -81,17 +81,12 @@
     const cabeceras=['Código','Operador','Distrito','Conversiones 2026','Monto de conversión','Desembolsado'],fila=[taller.codigo,taller.operador,taller.distrito,taller.conversiones,taller.monto,taller.desembolsado];
     descargarBlob('\uFEFF'+[cabeceras,fila].map(f=>f.map(v=>`"${String(v).replaceAll('"','""')}"`).join(';')).join('\r\n'),'text/csv;charset=utf-8',`${taller.codigo.toLowerCase()}-informacion.csv`);
   }
-  function abrirReporteDesdeTallerGnv(taller){
-    abrirReporteRecargasGnv();$('reporteDepartamentoGnv').value=taller.departamento;actualizarProvinciasReporteRecargasGnv();
-    if([...$('reporteProvinciaGnv').options].some(x=>x.value===taller.provincia))$('reporteProvinciaGnv').value=taller.provincia;
-    paginaReporteRecargas=1;renderReporteRecargasGnv();
-  }
   function mostrarDetalleTallerGnv(taller){
     seleccionActual=null;$('resumenGeneralGnv').hidden=true;
     const detalle=$('detalleConversionGnv');detalle.hidden=false;detalle.className='detalle-conversion-gnv detalle-taller-gnv';
     const campos=[['Código',taller.codigo],['Operador',taller.operador],['Distrito',taller.distrito],['Conversiones 2026',taller.conversiones.toLocaleString('es-PE')],['Monto de conversión',`S/ ${taller.monto.toLocaleString('es-PE')}`],['Desembolsado',`S/ ${taller.desembolsado.toLocaleString('es-PE')}`]];
-    detalle.innerHTML=`<button type="button">Limpiar</button><small>TALLER AUTORIZADO</small><h3>Información del taller</h3><div class="detalle-grid-gnv">${campos.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('')}</div><div class="acciones-detalle-taller-gnv"><button type="button" data-accion-taller="exportar">Exportar información</button><button type="button" data-accion-taller="recargas">Reporte de recargas</button></div>`;
-    detalle.querySelector(':scope > button').onclick=restaurarResumen;detalle.querySelector('[data-accion-taller="exportar"]').onclick=()=>exportarTallerGnv(taller);detalle.querySelector('[data-accion-taller="recargas"]').onclick=()=>abrirReporteDesdeTallerGnv(taller);$('panelDerechoGnv').scrollTo({top:0,behavior:'smooth'});
+    detalle.innerHTML=`<button type="button">Limpiar</button><small>TALLER AUTORIZADO</small><h3>Información del taller</h3><div class="detalle-grid-gnv">${campos.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('')}</div><div class="acciones-detalle-taller-gnv"><button type="button" data-accion-taller="exportar">Exportar información</button></div>`;
+    detalle.querySelector(':scope > button').onclick=restaurarResumen;detalle.querySelector('[data-accion-taller="exportar"]').onclick=()=>exportarTallerGnv(taller);$('panelDerechoGnv').scrollTo({top:0,behavior:'smooth'});
   }
   function prepararTalleresGnv(){
     grupoTalleresGnv=L.layerGroup().addTo(mapa);datosTalleresGnv().forEach(taller=>{const marcador=L.marker([taller.lat,taller.lng],{icon:iconoTallerGnv(),title:`Taller ${taller.operador}`});marcador.bindTooltip(`<strong>${taller.operador}</strong><br>${taller.distrito}`);marcador.on('click',evento=>{L.DomEvent.stopPropagation(evento);mostrarDetalleTallerGnv(taller)});grupoTalleresGnv.addLayer(marcador)});
@@ -103,8 +98,8 @@
     seleccionActual=null;$('resumenGeneralGnv').hidden=true;
     const detalle=$('detalleConversionGnv'),alerta=grifo.nivel==='alerta';detalle.hidden=false;detalle.className=`detalle-conversion-gnv detalle-grifo-gnv nivel-${grifo.nivel}`;
     const placas=grifo.placas.length?grifo.placas.map(item=>`<article><b>${item.placa}</b><span>${item.detalle}</span></article>`).join(''):'<p class="sin-alertas-grifo-gnv">No se detectaron placas con patrones anormales en este grifo.</p>';
-    detalle.innerHTML=`<button type="button">Limpiar</button><small>GRIFO GNV · ${grifo.id}</small><h3>Información del grifo</h3><div class="detalle-grid-gnv"><div><span>Estado</span><b class="estado-grifo-gnv">${grifo.estado}</b></div><div><span>Dirección</span><b>${grifo.direccion}</b></div><div><span>Ubicación</span><b>${grifo.distrito}, ${grifo.departamento}</b></div><div><span>Placas asociadas</span><b>${grifo.placas.length}</b></div></div>${alerta?'<aside class="alerta-tanqueo-gnv"><strong>Alerta de tanqueo</strong><p>Última carga registrada en este grifo después de tanqueos reiterados en otras localizaciones.</p></aside>':''}<section class="placas-grifo-gnv"><h4>${grifo.placas.length?'Placas con seguimiento':'Estado del monitoreo'}</h4>${placas}</section><div class="acciones-detalle-grifo-gnv"><button type="button" data-accion-grifo="reporte">Reporte de recargas</button><button type="button" data-accion-grifo="bono">Pérdida de Bono Provincia</button></div>`;
-    detalle.querySelector(':scope > button').onclick=restaurarResumen;detalle.querySelector('[data-accion-grifo="reporte"]').onclick=()=>{abrirReporteRecargasGnv();$('reporteDepartamentoGnv').value=grifo.departamento;actualizarProvinciasReporteRecargasGnv();if([...$('reporteProvinciaGnv').options].some(x=>x.value===grifo.provincia))$('reporteProvinciaGnv').value=grifo.provincia;paginaReporteRecargas=1;renderReporteRecargasGnv()};detalle.querySelector('[data-accion-grifo="bono"]').onclick=abrirReglasBonoGnv;$('panelDerechoGnv').scrollTo({top:0,behavior:'smooth'});
+    detalle.innerHTML=`<button type="button">Limpiar</button><small>GRIFO GNV · ${grifo.id}</small><h3>Información del grifo</h3><div class="detalle-grid-gnv"><div><span>Estado</span><b class="estado-grifo-gnv">${grifo.estado}</b></div><div><span>Dirección</span><b>${grifo.direccion}</b></div><div><span>Ubicación</span><b>${grifo.distrito}, ${grifo.departamento}</b></div><div><span>Placas asociadas</span><b>${grifo.placas.length}</b></div></div>${alerta?'<aside class="alerta-tanqueo-gnv"><strong>Alerta de tanqueo</strong><p>Última carga registrada en este grifo después de tanqueos reiterados en otras localizaciones.</p></aside>':''}<section class="placas-grifo-gnv"><h4>${grifo.placas.length?'Placas con seguimiento':'Estado del monitoreo'}</h4>${placas}</section><div class="acciones-detalle-grifo-gnv"><button type="button" data-accion-grifo="bono">Pérdida de Bono Provincia</button></div>`;
+    detalle.querySelector(':scope > button').onclick=restaurarResumen;detalle.querySelector('[data-accion-grifo="bono"]').onclick=abrirReglasBonoGnv;$('panelDerechoGnv').scrollTo({top:0,behavior:'smooth'});
   }
   function prepararGrifosGnv(){
     grupoGrifosGnv=L.layerGroup().addTo(mapa);grifosGnv.forEach(grifo=>{const marcador=L.marker([grifo.lat,grifo.lng],{icon:iconoGrifoGnv(grifo),title:`${grifo.nombre} · ${grifo.estado}`});marcador.bindTooltip(`<strong>${grifo.nombre}</strong><br>${grifo.estado}`);marcador.on('click',evento=>{L.DomEvent.stopPropagation(evento);mostrarDetalleGrifoGnv(grifo)});grupoGrifosGnv.addLayer(marcador)});
@@ -129,7 +124,7 @@
     const detalle=$('detalleConversionGnv');detalle.hidden=false;detalle.className='detalle-conversion-gnv';
     const campos=[
       ['Código',x.id],['Beneficiario',x.beneficiario],['DNI',x.dni],['Placa',x.placa],
-      ['Estado',x.estado],['Combustible',x.combustible],['Cilindros',x.cilindros],['Servicio',x.servicio],
+      ['Estado principal',x.estado],['Etapa del proceso',x.etapa||x.estado],['Combustible',x.combustible],['Cilindros',x.cilindros],['Servicio',x.servicio],
       ['Taller autorizado',x.taller],['Fecha de conversión',x.fecha],['Ubicación',`${x.distrito}, ${x.departamento}`],
       ['Monto desembolsado',`S/ ${x.desembolsado.toLocaleString('es-PE')}`]
     ];
@@ -286,6 +281,7 @@
     L.control.zoom({position:'bottomleft'}).addTo(mapa);
     bases.osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'});
     bases.topografico=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'© OpenTopoMap'});
+    bases.satelite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'Imágenes © Esri'});
     baseActual=bases.osm.addTo(mapa);
     grupoMarcadores=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:55,spiderfyOnMaxZoom:true,iconCreateFunction:iconoCluster}).addTo(mapa);
     prepararTalleresGnv();
@@ -418,7 +414,7 @@
   function filtrarGraficas(){
     const region=$('graficaRegion').value,entidad=$('graficaEntidad').value,combustible=$('graficaCombustible').value,cilindros=$('graficaCilindros').value;
     const desde=$('graficaDesde').value,hasta=$('graficaHasta').value;
-    return registros.filter(x=>(!region||x.region===region)&&(!entidad||x.entidadFinanciera===entidad)&&(!combustible||x.combustible===combustible)&&(!cilindros||String(x.cilindros)===cilindros)&&(!desde||x.fecha>=desde)&&(!hasta||x.fecha<=hasta));
+    return registros.filter(x=>(!region||x.departamento===region)&&(!entidad||x.entidadFinanciera===entidad)&&(!combustible||x.combustible===combustible)&&(!cilindros||String(x.cilindros)===cilindros)&&(!desde||x.fecha>=desde)&&(!hasta||x.fecha<=hasta));
   }
   function actualizarAmbitoGraficas(){
     const lista=filtrarGraficas(),factor=lista.length/Math.max(registros.length,1);
@@ -437,7 +433,7 @@
   function cerrarModal(id){$(id).hidden=true;if(!document.querySelector('.modal-gnv:not([hidden])'))document.body.classList.remove('modal-abierto-gnv')}
   function actualizarEstadosConfiguracionMovilGnv(){
     const sms=$('habilitarSmsMovilGnv').checked,biometria=$('habilitarBiometriaMovilGnv').checked;
-    $('estadoSmsMovilGnv').textContent=sms?'Habilitado':'Deshabilitado';$('estadoSmsMovilGnv').classList.toggle('habilitado',sms);$('detalleSmsMovilGnv').textContent=sms?'Servicio habilitado para todos los usuarios.':'No se enviarán códigos ni alertas mediante SMS.';
+    $('estadoSmsMovilGnv').textContent=sms?'Habilitado':'Deshabilitado';$('estadoSmsMovilGnv').classList.toggle('habilitado',sms);$('detalleSmsMovilGnv').textContent=sms?'0 de 60,000 SMS disponibles para inscripción.':'No se enviarán SMS de inscripción.';
     $('estadoBiometriaMovilGnv').textContent=biometria?'Habilitada':'Deshabilitada';$('estadoBiometriaMovilGnv').classList.toggle('habilitado',biometria);$('detalleBiometriaMovilGnv').textContent=biometria?'Validación facial disponible en dispositivos compatibles.':'Acceso mediante contraseña y código de seguridad.';
   }
   function cargarConfiguracionMovilGnv(){
@@ -660,7 +656,7 @@
     const lista=morososFiltrados(),porPagina=4,paginas=Math.max(1,Math.ceil(lista.length/porPagina));
     paginaMorosidad=Math.min(paginaMorosidad,paginas);
     const inicio=(paginaMorosidad-1)*porPagina,actual=lista.slice(inicio,inicio+porPagina);
-    $('tablaMorosidadGnv').innerHTML=actual.map(x=>`<tr><td><strong>${x.placa}</strong></td><td>${x.beneficiario}</td><td>${x.taller}</td><td>${x.cuotas}</td><td>${x.monto?`S/ ${x.monto.toFixed(2)}`:'—'}</td><td><span class="estado-mora-gnv estado-${x.estado.toLowerCase().replaceAll(' ','-')}">${x.estado}</span></td><td>${x.mensajeEnviado?`<span class="mensaje-enviado-gnv"><b>Automático · Administración</b><small>${x.ultimoEnvio}<br>${x.canalEnvio}</small></span>`:'<span class="mensaje-no-aplica-gnv">Sin cuotas vencidas</span>'}</td><td>${x.monto?`<button class="boton-mensaje-gnv" type="button" data-placa="${x.placa}">Revisar / reenviar</button>`:'—'}</td></tr>`).join('')||'<tr><td colspan="8">No se encontraron beneficiarios.</td></tr>';
+    $('tablaMorosidadGnv').innerHTML=actual.map(x=>`<tr><td><strong>${x.placa}</strong></td><td>${x.beneficiario}</td><td>${x.taller}</td><td>${x.dias?`${x.dias} días`:'—'}</td><td>${x.monto?`S/ ${x.monto.toFixed(2)}`:'—'}</td><td><span class="estado-mora-gnv estado-${x.estado.toLowerCase().replaceAll(' ','-')}">${x.estado}</span></td><td>${x.mensajeEnviado?`<span class="mensaje-enviado-gnv"><b>Automático · Administración</b><small>${x.ultimoEnvio}<br>${x.canalEnvio}</small></span>`:'<span class="mensaje-no-aplica-gnv">Sin alerta activa</span>'}</td><td>${x.monto?`<button class="boton-mensaje-gnv" type="button" data-placa="${x.placa}">Revisar / reenviar</button>`:'—'}</td></tr>`).join('')||'<tr><td colspan="8">No se encontraron beneficiarios.</td></tr>';
     $('resumenPaginaMorosidad').textContent=`Mostrando ${lista.length?inicio+1:0}–${Math.min(inicio+porPagina,lista.length)} de ${lista.length}`;
     $('numerosPaginaMorosidad').innerHTML=Array.from({length:paginas},(_,i)=>`<button type="button" data-pagina="${i+1}" class="${paginaMorosidad===i+1?'activo':''}">${i+1}</button>`).join('');
     $('paginaAnteriorMorosidad').disabled=paginaMorosidad===1;$('paginaSiguienteMorosidad').disabled=paginaMorosidad===paginas;
@@ -676,7 +672,7 @@
     $('mensajeBeneficiarioGnv').textContent=x?.beneficiario||'Todos los beneficiarios con mora';
     $('mensajePlacaGnv').textContent=x?.placa||'Envío masivo';
     $('mensajeMontoGnv').textContent=x?`S/ ${x.monto.toFixed(2)}`:'Según cada registro';
-    $('mensajeCuotasGnv').textContent=x?`${x.cuotas} cuota${x.cuotas===1?'':'s'}`:'Según cada registro';
+    $('mensajeCuotasGnv').textContent=x?`${x.dias} días de atraso`:'Según cada registro';
     $('textoMensajeGnv').value=textoCobranza(x);
     abrirModal('modalMensajeGnv');
   }
@@ -685,9 +681,9 @@
   }
   function actualizarTendenciaConversionesGnv(lista){
     const modo=$('graficaAgrupacion').value;
-    const clave=modo==='anio'?x=>x.fecha.slice(0,4):modo==='region'?x=>x.region:x=>x.fecha.slice(0,7);
+    const clave=modo==='anio'?x=>x.fecha.slice(0,4):modo==='departamento'?x=>x.departamento:x=>x.fecha.slice(0,7);
     let datos=agruparConteosGnv(lista,clave);
-    if(modo!=='region')datos.sort((a,b)=>a[0].localeCompare(b[0]));
+    if(modo!=='departamento')datos.sort((a,b)=>a[0].localeCompare(b[0]));
     const etiquetas=datos.map(([nombre])=>modo==='mes'?new Date(`${nombre}-01T00:00:00`).toLocaleDateString('es-PE',{month:'short',year:'2-digit'}):nombre);
     const barras=datos.map(x=>x[1]),acumuladas=[];barras.reduce((s,n)=>{acumuladas.push(s+n);return s+n},0);
     crearGraficoMixto('graficoConversiones',etiquetas.length?etiquetas:['Sin datos'],barras.length?barras:[0],acumuladas.length?acumuladas:[0]);
@@ -742,11 +738,11 @@
   function datosTablaGraficaGnv(tarjeta,lista){
     const titulo=tarjeta.querySelector('h2')?.textContent.trim()||'Gráfica';
     if(titulo.includes('conversiones por mes')){
-      const modo=$('graficaAgrupacion').value,clave=modo==='anio'?x=>x.fecha.slice(0,4):modo==='region'?x=>x.region:x=>x.fecha.slice(0,7),datos=agruparConteosGnv(lista,clave);let acumulado=0;
+      const modo=$('graficaAgrupacion').value,clave=modo==='anio'?x=>x.fecha.slice(0,4):modo==='departamento'?x=>x.departamento:x=>x.fecha.slice(0,7),datos=agruparConteosGnv(lista,clave);let acumulado=0;
       return [['Período','Conversiones','Acumulado'],datos.map(([nombre,valor])=>[nombre,valor,acumulado+=valor])];
     }
     if(titulo.includes('Meta vs.'))return [['Indicador','Valor'],[...tarjeta.querySelectorAll('.resumen-meta-real-gnv article')].map(x=>[x.querySelector('span')?.textContent,x.querySelector('strong')?.textContent])];
-    if(titulo.includes('región'))return [['Departamento','Conversiones'],agruparConteosGnv(lista,'departamento').slice(0,10)];
+    if(titulo.includes('departamento'))return [['Departamento','Conversiones'],agruparConteosGnv(lista,'departamento').slice(0,10)];
     if(titulo.includes('combustible'))return [['Combustible','Vehículos'],agruparConteosGnv(lista,'combustible')];
     if(titulo.includes('cilindros'))return [['Configuración','Vehículos'],agruparConteosGnv(lista,x=>`${x.cilindros} cilindro${x.cilindros===1?'':'s'}`)];
     if(titulo.includes('financiera'))return [['Entidad financiera','Operaciones'],agruparConteosGnv(lista,'entidadFinanciera')];
@@ -906,64 +902,6 @@
     if(diasRiesgo>=diasPerdida){$('reglaDiasRiesgoGnv').setCustomValidity('La alerta preventiva debe comenzar antes de la pérdida del bono.');$('reglaDiasRiesgoGnv').reportValidity();return}
     $('reglaDiasRiesgoGnv').setCustomValidity('');const ahora=new Date();reglaBonoGnv={activa:$('reglaBonoActivaGnv').checked,diasRiesgo,diasPerdida,departamento:$('reglaDepartamentoGnv').value,provincia:$('reglaProvinciaGnv').value,actualizado:`${ahora.toLocaleDateString('es-PE')} · ${ahora.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'})}`};
     localStorage.setItem('ahorroGnvReglaBonoProvincia',JSON.stringify(reglaBonoGnv));cerrarModal('modalReglasBonoGnv');
-    if(!$('modalReporteRecargasGnv').hidden)renderReporteRecargasGnv();
-  }
-  function datosReporteRecargasGnv(){
-    return registros.map((registro,indice)=>{
-      const diasSinRecarga=(indice*7+Number(String(registro.placa||'').replace(/\D/g,'').slice(-2)||0))%46;
-      const aplica=reglaBonoGnv.activa&&aplicaUbicacionReglaBonoGnv(registro),estado=aplica&&diasSinRecarga>reglaBonoGnv.diasPerdida?'Bono perdido':aplica&&diasSinRecarga>=reglaBonoGnv.diasRiesgo?'En riesgo':'Vigente';
-      const recargas=Math.max(1,(registro.recargas||3)+(indice%5)-2);
-      return {...registro,semana:`Semana ${27+(indice%5)}`,diasSinRecarga,estadoRecarga:estado,recargasSemana:recargas,volumen:recargas*(11+(indice%7))};
-    });
-  }
-  function filtrarReporteRecargasGnv(){
-    const semana=$('reporteSemanaGnv').value,departamento=$('reporteDepartamentoGnv').value,provincia=$('reporteProvinciaGnv').value,estado=$('reporteEstadoGnv').value;
-    return datosReporteRecargasGnv().filter(x=>(!semana||x.semana===semana)&&(!departamento||x.departamento===departamento)&&(!provincia||x.provincia===provincia)&&(!estado||x.estadoRecarga===estado));
-  }
-  function prepararFiltrosReporteRecargasGnv(){
-    llenarSelect('reporteSemanaGnv',['Semana 27','Semana 28','Semana 29','Semana 30','Semana 31'],'Todas');
-    llenarSelect('reporteDepartamentoGnv',unicos('departamento'),'Todos');
-    actualizarProvinciasReporteRecargasGnv();
-  }
-  function actualizarProvinciasReporteRecargasGnv(){
-    const departamento=$('reporteDepartamentoGnv').value;
-    llenarSelect('reporteProvinciaGnv',unicos('provincia',registros.filter(x=>!departamento||x.departamento===departamento)),'Todas');
-  }
-  function renderReporteRecargasGnv(){
-    const lista=filtrarReporteRecargasGnv(),porPagina=6,totalPaginas=Math.max(1,Math.ceil(lista.length/porPagina));
-    paginaReporteRecargas=Math.min(paginaReporteRecargas,totalPaginas);
-    const inicio=(paginaReporteRecargas-1)*porPagina,filas=lista.slice(inicio,inicio+porPagina);
-    $('kpiVehiculosRecargasGnv').textContent=lista.length.toLocaleString('es-PE');
-    $('kpiRecargasGnv').textContent=lista.reduce((total,x)=>total+x.recargasSemana,0).toLocaleString('es-PE');
-    $('kpiBonoPerdidoGnv').textContent=lista.filter(x=>x.estadoRecarga==='Bono perdido').length.toLocaleString('es-PE');
-    $('kpiRiesgoRecargasGnv').textContent=lista.filter(x=>x.estadoRecarga==='En riesgo').length.toLocaleString('es-PE');
-    $('tablaReporteRecargasGnv').innerHTML=filas.map(x=>`<tr><td>${x.semana}</td><td><strong>${x.placa}</strong></td><td>${x.departamento}</td><td><strong>${x.provincia}</strong><small>${x.taller}</small></td><td>${x.recargasSemana}</td><td>${x.volumen} m³</td><td>${x.diasSinRecarga} días</td><td><span class="estado-recarga-gnv estado-${x.estadoRecarga.toLowerCase().replaceAll(' ','-')}">${x.estadoRecarga}</span></td></tr>`).join('')||'<tr><td colspan="8" class="sin-datos-recargas-gnv">No hay registros para los filtros seleccionados.</td></tr>';
-    $('resumenPaginacionRecargasGnv').textContent=lista.length?`Mostrando ${inicio+1}–${Math.min(inicio+porPagina,lista.length)} de ${lista.length} registros`:'Mostrando 0 registros';
-    $('paginaRecargasGnv').textContent=`Página ${paginaReporteRecargas} de ${totalPaginas}`;
-    $('anteriorRecargasGnv').disabled=paginaReporteRecargas===1;$('siguienteRecargasGnv').disabled=paginaReporteRecargas===totalPaginas;
-  }
-  function abrirReporteRecargasGnv(){cargarReglaBonoGnv();prepararFiltrosReporteRecargasGnv();$('kpiBonoPerdidoGnv').nextElementSibling.textContent=reglaBonoGnv.activa?`Más de ${reglaBonoGnv.diasPerdida} días · ${textoAmbitoReglaBonoGnv()}`:'Regla desactivada';paginaReporteRecargas=1;renderReporteRecargasGnv();abrirModal('modalReporteRecargasGnv')}
-  function exportarReporteRecargasGnv(){
-    const cabeceras=['Semana','Placa','Departamento','Provincia','Grifo','Recargas','Volumen m3','Días sin recarga','Estado'];
-    const filas=filtrarReporteRecargasGnv().map(x=>[x.semana,x.placa,x.departamento,x.provincia,x.taller,x.recargasSemana,x.volumen,x.diasSinRecarga,x.estadoRecarga]);
-    descargarBlob('\uFEFF'+[cabeceras,...filas].map(f=>f.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(';')).join('\r\n'),'text/csv;charset=utf-8','reporte-recargas-bono-provincia.csv');
-  }
-  function estadoCofideGnv(){
-    const ahora=new Date(),hora=ahora.toLocaleTimeString('es-PE',{hour12:false}),base={registros:1248,ultima:`Hoy · ${hora}`,logs:[
-      {tipo:'exito',texto:`${hora} · Sincronización exitosa · 36 recaudos y 12 financiamientos actualizados.`},
-      {tipo:'exito',texto:'Conexión autenticada con Amazon COFIDE.'},
-      {tipo:'error',texto:'Tiempo de espera excedido · reintento automático completado.'}
-    ]};
-    try{return{...base,...JSON.parse(localStorage.getItem('ahorroGnvEstadoCofide')||'{}')}}catch{return base}
-  }
-  function renderApiCofideGnv(estado=estadoCofideGnv()){
-    $('ultimaSincronizacionCofideGnv').textContent=estado.ultima;$('procesamientoCofideGnv').textContent=`${Number(estado.registros).toLocaleString('es-PE')} registros`;
-    $('logsApiCofideGnv').innerHTML=estado.logs.slice(0,4).map(log=>`<li class="${log.tipo}"><i></i><span>${log.texto}</span></li>`).join('');
-  }
-  function sincronizarApiCofideGnv(){
-    const boton=$('sincronizarApiCofideGnv'),estado=estadoCofideGnv(),ahora=new Date(),hora=ahora.toLocaleTimeString('es-PE',{hour12:false});
-    boton.disabled=true;boton.textContent='Sincronizando…';$('estadoApiCofideGnv').textContent='Sincronizando';$('estadoApiCofideGnv').classList.add('sincronizando');
-    setTimeout(()=>{const actualizado={registros:estado.registros+48,ultima:`Hoy · ${hora}`,logs:[{tipo:'exito',texto:`${hora} · Sincronización exitosa · 36 recaudos y 12 financiamientos actualizados.`},...estado.logs].slice(0,4)};localStorage.setItem('ahorroGnvEstadoCofide',JSON.stringify(actualizado));renderApiCofideGnv(actualizado);$('estadoApiCofideGnv').textContent='Conectado';$('estadoApiCofideGnv').classList.remove('sincronizando');boton.disabled=false;boton.textContent='Sincronizar ahora'},900);
   }
   function enlazarEventos(){
     $('filtrosGnv').onsubmit=evento=>{evento.preventDefault();actualizarMapa(true)};
@@ -974,6 +912,8 @@
     document.querySelectorAll('[data-estado]').forEach(control=>control.onchange=()=>actualizarMapa(false));
     $('capaTalleresGnv').onchange=evento=>evento.target.checked?grupoTalleresGnv.addTo(mapa):mapa.removeLayer(grupoTalleresGnv);
     $('capaGrifosGnv').onchange=evento=>evento.target.checked?grupoGrifosGnv.addTo(mapa):mapa.removeLayer(grupoGrifosGnv);
+    $('buscadorGeograficoGnv').onsubmit=evento=>{evento.preventDefault();const consulta=$('consultaGeograficaGnv').value.trim(),coordenadas=consulta.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);if(coordenadas){mapa.setView([Number(coordenadas[1]),Number(coordenadas[2])],13);$('contadorMapa').textContent='Ubicación encontrada en el mapa';return}const coincidencia=registros.find(x=>[x.departamento,x.provincia,x.distrito,x.taller].some(valor=>String(valor).toLowerCase().includes(consulta.toLowerCase())));if(coincidencia){mapa.setView([coincidencia.lat,coincidencia.lng],13);mostrarDetalle(coincidencia);return}$('contadorMapa').textContent='Ingrese ubigeo, dirección o coordenadas válidas'};
+    $('activarPoligonoGnv').onclick=()=>activarHerramienta('poligono',$('activarPoligonoGnv'));
     $('botonFiltrosGnv').onclick=()=>{const contenedor=$('contenedorFiltrosGnv'),colapsado=contenedor.classList.toggle('colapsado');$('botonFiltrosGnv').setAttribute('aria-expanded',String(!colapsado));$('botonFiltrosGnv').setAttribute('aria-label',colapsado?'Mostrar filtros':'Ocultar filtros');requestAnimationFrame(()=>mapa.invalidateSize({pan:false}));setTimeout(()=>mapa.invalidateSize({pan:false}),250)};
     $('botonMapas').onclick=evento=>{L.DomEvent.stopPropagation(evento);alternarPanel('panelMapas',$('botonMapas'))};
     $('botonCapas').onclick=evento=>{L.DomEvent.stopPropagation(evento);alternarPanel('panelCapas',$('botonCapas'))};
@@ -1062,12 +1002,6 @@
     $('exportarGraficas').onclick=exportarResumen;
     $('abrirExportacionGnv').onclick=abrirExportacion;
     $('generarExportacionGnv').onclick=generarExportacion;
-    $('abrirReporteRecargasGnv').onclick=abrirReporteRecargasGnv;
-    $('reporteDepartamentoGnv').onchange=()=>{actualizarProvinciasReporteRecargasGnv();paginaReporteRecargas=1;renderReporteRecargasGnv()};
-    ['reporteSemanaGnv','reporteProvinciaGnv','reporteEstadoGnv'].forEach(id=>$(id).onchange=()=>{paginaReporteRecargas=1;renderReporteRecargasGnv()});
-    $('anteriorRecargasGnv').onclick=()=>{if(paginaReporteRecargas>1){paginaReporteRecargas--;renderReporteRecargasGnv()}};
-    $('siguienteRecargasGnv').onclick=()=>{paginaReporteRecargas++;renderReporteRecargasGnv()};
-    $('exportarRecargasCsvGnv').onclick=exportarReporteRecargasGnv;
     $('reglaDepartamentoGnv').onchange=()=>{llenarProvinciasReglaBonoGnv();actualizarResumenReglaBonoGnv()};
     $('reglaProvinciaGnv').onchange=actualizarResumenReglaBonoGnv;
     ['reglaBonoActivaGnv','reglaDiasRiesgoGnv','reglaDiasPerdidaGnv'].forEach(id=>$(id).oninput=actualizarResumenReglaBonoGnv);
@@ -1091,6 +1025,7 @@
     window.addEventListener('hashchange',()=>{if(location.hash==='#graficas')refrescarMapaCalorVisible()});
     document.querySelector('a[href="#graficas"]')?.addEventListener('click',refrescarMapaCalorVisible);
     $('abrirMorosidadGnv').onclick=()=>{paginaMorosidad=1;renderMorosidad();abrirModal('modalMorosidadGnv')};
+    $('abrirMontosPapGnv').onclick=()=>abrirModal('modalMontosPapGnv');
     $('abrirGestionMorosidadAdminGnv').onclick=()=>{paginaMorosidad=1;renderMorosidad();abrirModal('modalMorosidadGnv')};
     const botonConfiguracionMovil=$('abrirConfiguracionMovilGnv');
     if(botonConfiguracionMovil){
@@ -1101,7 +1036,6 @@
       $('abrirReglasBonoGnv').hidden=!esAdministrador;$('abrirReglasBonoGnv').onclick=abrirReglasBonoGnv;
       $('configurarMovilDesdeAdminGnv').onclick=()=>{cargarConfiguracionMovilGnv();abrirModal('modalConfiguracionMovilGnv')};
       $('configurarReglasDesdeAdminGnv').onclick=abrirReglasBonoGnv;
-      $('tarjetaApiCofideGnv').hidden=!esAdministrador;if(esAdministrador){renderApiCofideGnv();$('sincronizarApiCofideGnv').onclick=sincronizarApiCofideGnv}
     }
     $('habilitarSmsMovilGnv').onchange=actualizarEstadosConfiguracionMovilGnv;$('habilitarBiometriaMovilGnv').onchange=actualizarEstadosConfiguracionMovilGnv;$('guardarConfiguracionMovilGnv').onclick=guardarConfiguracionMovilGnv;
     document.querySelectorAll('[data-cerrar-modal]').forEach(boton=>boton.onclick=()=>cerrarModal(boton.dataset.cerrarModal));
@@ -1110,7 +1044,7 @@
     $('paginaAnteriorMorosidad').onclick=()=>{if(paginaMorosidad>1){paginaMorosidad--;renderMorosidad()}};
     $('paginaSiguienteMorosidad').onclick=()=>{paginaMorosidad++;renderMorosidad()};
     $('mensajeTodosGnv').onclick=()=>abrirMensaje();
-    $('enviarMensajeGnv').onclick=()=>{const ahora=new Date(),marca=`Hoy · ${String(ahora.getHours()).padStart(2,'0')}:${String(ahora.getMinutes()).padStart(2,'0')}`;if(destinatarioMensajeActual){destinatarioMensajeActual.mensajeEnviado=true;destinatarioMensajeActual.ultimoEnvio=marca;destinatarioMensajeActual.canalEnvio='SMS + correo'}else morosos.filter(x=>x.cuotas>=1).forEach(x=>{x.mensajeEnviado=true;x.ultimoEnvio=marca;x.canalEnvio='SMS + correo'});cerrarModal('modalMensajeGnv');renderMorosidad();const boton=$('mensajeTodosGnv'),texto='Reenviar desde Administración';boton.textContent='Mensajes reenviados';setTimeout(()=>boton.textContent=texto,1800)};
+    $('enviarMensajeGnv').onclick=()=>{const ahora=new Date(),marca=`Hoy · ${String(ahora.getHours()).padStart(2,'0')}:${String(ahora.getMinutes()).padStart(2,'0')}`;if(destinatarioMensajeActual){destinatarioMensajeActual.mensajeEnviado=true;destinatarioMensajeActual.ultimoEnvio=marca;destinatarioMensajeActual.canalEnvio='Notificación push'}else morosos.filter(x=>x.dias>15).forEach(x=>{x.mensajeEnviado=true;x.ultimoEnvio=marca;x.canalEnvio='Notificación push'});cerrarModal('modalMensajeGnv');renderMorosidad();const boton=$('mensajeTodosGnv'),texto='Reenviar push';boton.textContent='Push reenviado';setTimeout(()=>boton.textContent=texto,1800)};
     document.addEventListener('keydown',evento=>{if(evento.key==='Escape'){evento.preventDefault();document.querySelectorAll('.modal-gnv:not([hidden])').forEach(modal=>cerrarModal(modal.id));limpiarDibujoHerramienta(true);herramientaActiva=null;document.querySelectorAll('[data-herramienta-gnv]').forEach(item=>item.classList.remove('activo'));mapa.getContainer().style.cursor='';mapa.doubleClickZoom.enable();mapa.setView([-10.2,-75.2],5)}});
     window.addEventListener('resize',()=>mapa.invalidateSize());
     actualizarVisibilidadHerramientas();
@@ -1119,5 +1053,5 @@
     cargarReglaBonoGnv();prepararFiltros();prepararFiltrosGraficas();iniciarMapa();enlazarEventos();actualizarMapa(true);renderGraficas();renderMorosidad();
   }
   if(typeof L==='undefined')return;
-  fetch('datos_ahorro_gnv.json').then(respuesta=>{if(!respuesta.ok)throw new Error('No se pudieron cargar los registros');return respuesta.json()}).then(datos=>{const entidades=['BCP','Interbank','Caja Arequipa'];registros=datos.map((registro,i)=>({...registro,region:regionDeDepartamento(registro.departamento),entidadFinanciera:entidades[i%entidades.length],recargas:Math.max(2,Math.round((registro.desembolsado||registro.monto)/420)+(registro.estado==='Liquidada'?5:1)+(registro.cilindros||1)*2)}));iniciar()}).catch(error=>{console.error(error);$('contadorMapa').textContent='Datos no disponibles'});
+  fetch('datos_ahorro_gnv.json').then(respuesta=>{if(!respuesta.ok)throw new Error('No se pudieron cargar los registros');return respuesta.json()}).then(datos=>{const entidades=['BCP','Interbank','Caja Arequipa'],etapas=['En proceso','Certificación programada','Certificación aprobada','Certificación observada','Certificada','Liquidada'];registros=datos.map((registro,i)=>({...registro,region:regionDeDepartamento(registro.departamento),etapa:registro.estado==='Liquidada'?'Liquidada':registro.estado==='Certificada'?etapas[2+(i%3)]:etapas[i%2],entidadFinanciera:entidades[i%entidades.length],recargas:Math.max(2,Math.round((registro.desembolsado||registro.monto)/420)+(registro.estado==='Liquidada'?5:1)+(registro.cilindros||1)*2)}));iniciar()}).catch(error=>{console.error(error);$('contadorMapa').textContent='Datos no disponibles'});
 })();
