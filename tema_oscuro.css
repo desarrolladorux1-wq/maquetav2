@@ -3626,12 +3626,15 @@ html:not([data-tema="paulet"]) body.pagina-valefise #modalAlerta :is(
   box-shadow:none!important;
 }
 
-/* MCTER Paulet: sin superficie adicional detrás de las tarjetas del beneficiario. */
-html[data-tema="oscuro"] body.pagina-mcter #modalProcesoMcter > section,
-html[data-tema="oscuro"] body.pagina-mcter #modalProcesoMcter #contenidoModalMcter {
-  background:transparent!important;
+/* MCTER: el modal de procesos debe ser una superficie sólida, no un velo transparente. */
+html[data-tema="oscuro"] body.pagina-mcter #modalProcesoMcter > section {
+  background:#101a33!important;
   background-image:none!important;
-  box-shadow:none!important;
+  box-shadow:0 24px 70px rgba(2,8,22,.48)!important;
+}
+html[data-tema="oscuro"] body.pagina-mcter #modalProcesoMcter #contenidoModalMcter {
+  background:#101a33!important;
+  background-image:none!important;
 }
 html[data-tema="oscuro"] body.pagina-mcter #modalProcesoMcter .detalle-beneficiario-modal-mcter > div {
   background:transparent!important;

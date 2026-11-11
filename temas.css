@@ -4,5 +4,5 @@
  * html[data-tema="paulet"]. Mantener los archivos fuente separados facilita
  * el mantenimiento de cada paleta sin duplicar enlaces ni carga dinámica.
  */
-@import url("tema_oscuro.css?v=20261012-1");
+@import url("tema_oscuro.css?v=20261111-1");
 @import url("tema_paulet.css?v=20260909-1");
