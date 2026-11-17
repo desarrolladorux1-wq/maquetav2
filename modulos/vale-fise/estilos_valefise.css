@@ -822,7 +822,7 @@ body.modal-abierto { overflow: hidden; }
 .etiqueta-api, .etiqueta-manual { display: inline-block; min-width: 52px; padding: 4px 7px; text-align: center; border-radius: 20px; font-size: .58rem; font-weight: 800; }
 .etiqueta-api { color: #277b56; background: #dff4e8; }
 .etiqueta-manual { color: #9a6810; background: #fff0cb; }
-.acciones-canjes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.acciones-canjes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
 .acciones-canjes button { min-height: 40px; padding: 7px 10px; color: #fff; font-size: .66rem; line-height: 1.25; font-weight: 750; cursor: pointer; border: 0; border-radius: 10px; background: #3b7e9d; }
 .acciones-canjes button:hover { background: #2e6985; }
 .acciones-canjes #descargarFormatoEde { color: #35647e; border: 1px solid #bcd4e1; background: #eef6fa; }
