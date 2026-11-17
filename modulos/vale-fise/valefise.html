@@ -12,9 +12,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
   <link rel="stylesheet" href="../../estilos_generales.css?v=20261022-4">
   <link rel="stylesheet" href="../../estilos_asistente_ia.css?v=20260813-3">
-  <link rel="stylesheet" href="estilos_valefise.css?v=20260827-3">
+  <link rel="stylesheet" href="estilos_valefise.css?v=20261116-1">
   <link rel="stylesheet" href="apps_wiki_fise.css?v=20260819-1">
-<link rel="stylesheet" href="../../temas.css?v=20260907-1">
+<link rel="stylesheet" href="../../temas.css?v=20261116-1">
 </head>
 <body class="pagina-valefise">
   <div class="aplicacion">
@@ -192,7 +192,8 @@
           </div>
           <div class="acciones-canjes">
             <button type="button">&#128279; Conectar API EDE</button>
-            <button type="button">&#8679; Cargar archivo .xlsx</button>
+            <button type="button" id="descargarFormatoEde">Descargar formato Excel</button>
+            <button type="button" id="abrirCargaEde" class="accion-exportacion-unificada"><svg class="icono-exportacion-unificado" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V10"></path><path d="m7.5 14.5 4.5-4.5 4.5 4.5"></path><path d="M4.5 5.5v-2h15v2"></path></svg>Subir información a la EDE</button>
           </div>
         </section>
 
@@ -302,6 +303,26 @@
     </section>
   </div>
 
+  <div class="modal-carga-ede" id="modalCargaEde" hidden>
+    <button class="modal-carga-ede-fondo" type="button" data-cerrar-carga-ede aria-label="Cerrar modal"></button>
+    <section class="modal-carga-ede-contenido" role="dialog" aria-modal="true" aria-labelledby="tituloCargaEde">
+      <header class="modal-carga-ede-cabecera">
+        <div><small>CARGA MANUAL DE CANJES</small><h2 id="tituloCargaEde">Subir información a la EDE</h2><p>Seleccione la EDE, defina el período y adjunte el formato Excel diligenciado.</p></div>
+        <button type="button" data-cerrar-carga-ede aria-label="Cerrar">×</button>
+      </header>
+      <form id="formularioCargaEde" class="formulario-carga-ede">
+        <div class="campos-carga-ede">
+          <label>EDE específica<select id="cargaEde" required><option value="">Seleccione una EDE</option></select></label>
+          <label>Fecha desde<input id="cargaDesde" type="date" required></label>
+          <label>Fecha hasta<input id="cargaHasta" type="date" required></label>
+          <label class="campo-archivo-ede"><span>Archivo Excel diligenciado</span><input id="archivoCargaEde" type="file" accept=".xlsx,.xls" required><small>Columnas requeridas: suministro/cuenta, beneficiario, ubigeo, estado y DNI.</small></label>
+        </div>
+        <output id="estadoCargaEde" class="estado-carga-ede" aria-live="polite">Descargue el formato, complételo y adjúntelo aquí.</output>
+        <footer class="acciones-carga-ede"><button type="button" data-cerrar-carga-ede>Cancelar</button><button type="submit">Cargar información</button></footer>
+      </form>
+    </section>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
@@ -309,7 +330,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="../../scripts_generales.js?v=20261022-5"></script>
-  <script src="valefise.js?v=20261022-2"></script>
+  <script src="valefise.js?v=20261116-1"></script>
   <script>
     (function () {
       const botonHerramientas = document.getElementById('abrirHerramientasFise');

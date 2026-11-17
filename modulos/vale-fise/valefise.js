@@ -111,6 +111,15 @@
     ,graficoEvolucionVales: document.getElementById('graficoEvolucionVales')
     ,analiticaRegiones: document.getElementById('analiticaRegiones')
     ,analiticaSuministro: document.getElementById('analiticaSuministro')
+    ,descargarFormatoEde: document.getElementById('descargarFormatoEde')
+    ,abrirCargaEde: document.getElementById('abrirCargaEde')
+    ,modalCargaEde: document.getElementById('modalCargaEde')
+    ,formularioCargaEde: document.getElementById('formularioCargaEde')
+    ,cargaEde: document.getElementById('cargaEde')
+    ,cargaDesde: document.getElementById('cargaDesde')
+    ,cargaHasta: document.getElementById('cargaHasta')
+    ,archivoCargaEde: document.getElementById('archivoCargaEde')
+    ,estadoCargaEde: document.getElementById('estadoCargaEde')
   };
 
   let registros = [];
@@ -930,6 +939,57 @@
     XLSX.writeFile(libro, 'reporte_vale_fise.xlsx');
   }
 
+  const columnasFormatoEde = ['Suministro / N.º de cuenta', 'Nombre del beneficiario', 'Ubigeo', 'Estado del beneficiario', 'DNI'];
+  function descargarFormatoEde() {
+    if (!window.XLSX) return;
+    const libro = XLSX.utils.book_new();
+    const hoja = XLSX.utils.aoa_to_sheet([columnasFormatoEde]);
+    hoja['!cols'] = [{ wch: 28 }, { wch: 34 }, { wch: 16 }, { wch: 24 }, { wch: 14 }];
+    XLSX.utils.book_append_sheet(libro, hoja, 'Canjes EDE');
+    XLSX.writeFile(libro, 'formato_carga_canjes_ede.xlsx');
+  }
+  function abrirCargaEde() {
+    const valores = valoresUnicos(registros, 'ede');
+    elementos.cargaEde.replaceChildren(new Option('Seleccione una EDE', ''));
+    valores.forEach(ede => elementos.cargaEde.add(new Option(ede, ede)));
+    elementos.formularioCargaEde.reset();
+    if (elementos.ede.value) elementos.cargaEde.value = elementos.ede.value;
+    estadoCargaEde('Descargue el formato, complételo y adjúntelo aquí.');
+    elementos.modalCargaEde.hidden = false;
+    document.body.classList.add('modal-abierto');
+  }
+  function cerrarCargaEde() {
+    elementos.modalCargaEde.hidden = true;
+    document.body.classList.remove('modal-abierto');
+  }
+  function estadoCargaEde(mensaje, tipo = '') {
+    elementos.estadoCargaEde.className = `estado-carga-ede ${tipo}`.trim();
+    elementos.estadoCargaEde.textContent = mensaje;
+  }
+  async function validarArchivoCargaEde(archivo) {
+    if (!archivo) throw new Error('Adjunte el archivo Excel diligenciado.');
+    if (!/\.(xlsx|xls)$/i.test(archivo.name)) throw new Error('El archivo debe estar en formato .xlsx o .xls.');
+    if (!window.XLSX) return 0;
+    const libro = XLSX.read(await archivo.arrayBuffer(), { type: 'array' });
+    const hoja = libro.Sheets[libro.SheetNames[0]];
+    const filas = XLSX.utils.sheet_to_json(hoja, { header: 1, defval: '' });
+    const cabecera = (filas[0] || []).map(valor => String(valor).trim());
+    const faltantes = columnasFormatoEde.filter(columna => !cabecera.includes(columna));
+    if (faltantes.length) throw new Error(`El archivo no corresponde al formato. Falta: ${faltantes.join(', ')}.`);
+    return Math.max(0, filas.length - 1);
+  }
+  function registrarCargaManualEde(ede, cantidad) {
+    const tabla = document.getElementById('tablaCanjes');
+    const filaExistente = [...tabla.rows].find(fila => fila.cells[0]?.textContent.trim() === ede);
+    if (filaExistente) {
+      filaExistente.cells[1].innerHTML = '<span class="etiqueta-manual">Manual</span>';
+      filaExistente.cells[2].textContent = formatoNumero.format(cantidad || Number(filaExistente.cells[2].textContent.replace(/\D/g, '')));
+    } else {
+      const fila = tabla.insertRow();
+      fila.innerHTML = `<td>${ede}</td><td><span class="etiqueta-manual">Manual</span></td><td>${formatoNumero.format(cantidad)}</td>`;
+    }
+  }
+
   function cargarImagenReporte(ruta) {
     return fetch(ruta).then(respuesta => respuesta.blob()).then(blob => new Promise(resolve => {
       const lector = new FileReader(); lector.onload = () => resolve(lector.result); lector.readAsDataURL(blob);
@@ -1079,6 +1139,26 @@
     } finally {
       elementos.confirmarExportacion.disabled = false;
       elementos.confirmarExportacion.textContent = 'Generar reporte';
+    }
+  });
+
+  elementos.descargarFormatoEde.addEventListener('click', descargarFormatoEde);
+  elementos.abrirCargaEde.addEventListener('click', abrirCargaEde);
+  elementos.modalCargaEde.querySelectorAll('[data-cerrar-carga-ede]').forEach(boton => boton.addEventListener('click', cerrarCargaEde));
+  elementos.formularioCargaEde.addEventListener('submit', async function (evento) {
+    evento.preventDefault();
+    const ede = elementos.cargaEde.value;
+    const desde = elementos.cargaDesde.value;
+    const hasta = elementos.cargaHasta.value;
+    if (!ede || !desde || !hasta) { estadoCargaEde('Complete la EDE y el período de información.', 'error'); return; }
+    if (desde > hasta) { estadoCargaEde('La fecha desde no puede ser posterior a la fecha hasta.', 'error'); return; }
+    try {
+      estadoCargaEde('Validando archivo y columnas requeridas…');
+      const cantidad = await validarArchivoCargaEde(elementos.archivoCargaEde.files[0]);
+      registrarCargaManualEde(ede, cantidad);
+      estadoCargaEde(`${cantidad} registro${cantidad === 1 ? '' : 's'} cargado${cantidad === 1 ? '' : 's'} para ${ede} (${desde} a ${hasta}).`, 'exito');
+    } catch (error) {
+      estadoCargaEde(error.message || 'No se pudo procesar el archivo.', 'error');
     }
   });
 

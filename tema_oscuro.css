@@ -3741,3 +3741,16 @@ html[data-tema="oscuro"] body.pagina-electricidad-al-toque .lista-seleccion-circ
 html[data-tema="oscuro"] body.pagina-electricidad-al-toque .detalle-beneficiario-circulo-eat>div { border-color:#405d88!important; background:#17284a!important; }
 html[data-tema="oscuro"] body.pagina-electricidad-al-toque .detalle-beneficiario-circulo-eat dt { color:#bcd4f1!important; }
 html[data-tema="oscuro"] body.pagina-electricidad-al-toque .detalle-beneficiario-circulo-eat dd { color:#f7fbff!important; }
+
+/* Vale FISE: flujo de carga manual de canjes por EDE. */
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde .modal-carga-ede-contenido { color:#eaf3ff!important; border-color:#3d5c88!important; background:#101d38!important; background-image:none!important; box-shadow:0 25px 75px rgba(2,8,22,.5)!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde .modal-carga-ede-cabecera { border-color:#355077!important; background:#101d38!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde :where(h2,strong,b,label) { color:#f7fbff!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde :where(p,small,span) { color:#b9d0eb!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde :where(select,input,.campo-archivo-ede,.estado-carga-ede) { color:#eaf3ff!important; border-color:#405d88!important; background:#17284a!important; background-image:none!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde .estado-carga-ede { color:#bfe5f1!important; background:#162947!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde .estado-carga-ede.error { color:#ffc4c4!important; background:#4a242d!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde .estado-carga-ede.exito { color:#c7f1d6!important; background:#1d4738!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde .acciones-carga-ede { border-color:#355077!important; background:#101d38!important; }
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde .acciones-carga-ede button:first-child,
+html[data-tema="oscuro"] body.pagina-valefise #modalCargaEde .modal-carga-ede-cabecera>button { color:#d9e8ff!important; background:#1c345b!important; }

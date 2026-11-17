@@ -822,9 +822,36 @@ body.modal-abierto { overflow: hidden; }
 .etiqueta-api, .etiqueta-manual { display: inline-block; min-width: 52px; padding: 4px 7px; text-align: center; border-radius: 20px; font-size: .58rem; font-weight: 800; }
 .etiqueta-api { color: #277b56; background: #dff4e8; }
 .etiqueta-manual { color: #9a6810; background: #fff0cb; }
-.acciones-canjes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.acciones-canjes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
 .acciones-canjes button { min-height: 40px; padding: 7px 10px; color: #fff; font-size: .66rem; line-height: 1.25; font-weight: 750; cursor: pointer; border: 0; border-radius: 10px; background: #3b7e9d; }
 .acciones-canjes button:hover { background: #2e6985; }
+.acciones-canjes #descargarFormatoEde { color: #35647e; border: 1px solid #bcd4e1; background: #eef6fa; }
+.acciones-canjes #descargarFormatoEde:hover { background: #dfeef5; }
+
+/* Flujo de carga de canjes por EDE. */
+.modal-carga-ede { position: fixed; z-index: 2200; inset: 0; display: grid; place-items: center; padding: 20px; }
+.modal-carga-ede[hidden] { display: none; }
+.modal-carga-ede-fondo { position: absolute; inset: 0; border: 0; background: rgba(10, 22, 42, .56); backdrop-filter: blur(4px); }
+.modal-carga-ede-contenido { position: relative; width: min(620px, 100%); overflow: hidden; border: 1px solid #cbdbe7; border-radius: 20px; color: #26364d; background: #fff; box-shadow: 0 25px 75px rgba(20, 39, 62, .3); }
+.modal-carga-ede-cabecera { display: flex; align-items: start; justify-content: space-between; gap: 18px; padding: 22px; border-bottom: 1px solid #dce6ee; }
+.modal-carga-ede-cabecera small { color: #4788a8; font-size: .61rem; font-weight: 850; letter-spacing: .07em; }
+.modal-carga-ede-cabecera h2 { margin: 5px 0; color: #17203a; font-size: 1.24rem; }
+.modal-carga-ede-cabecera p { margin: 0; color: #71809a; font-size: .7rem; line-height: 1.5; }
+.modal-carga-ede-cabecera > button { width: 38px; height: 38px; flex: 0 0 auto; border: 0; border-radius: 10px; color: #52647b; background: #edf3f7; font-size: 1.35rem; cursor: pointer; }
+.formulario-carga-ede { padding: 20px 22px 0; }
+.campos-carga-ede { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.campos-carga-ede label { display: grid; gap: 7px; color: #566982; font-size: .65rem; font-weight: 800; }
+.campos-carga-ede :is(select,input) { width: 100%; min-height: 44px; padding: 0 12px; box-sizing: border-box; color: #253852; border: 1px solid #cbd9e6; border-radius: 10px; background: #f8fafc; font: inherit; font-size: .72rem; font-weight: 700; }
+.campos-carga-ede input[type="file"] { padding: 9px; cursor: pointer; }
+.campo-archivo-ede { grid-column: 1 / -1; padding: 13px; border: 1px dashed #9fc1d3; border-radius: 12px; background: #f4f9fc; }
+.campo-archivo-ede small { color: #72869a; font-size: .58rem; font-weight: 650; line-height: 1.4; }
+.estado-carga-ede { display: block; margin-top: 15px; padding: 11px 12px; border-left: 3px solid #58a9c7; border-radius: 8px; color: #527089; background: #eff7fa; font-size: .65rem; line-height: 1.45; }
+.estado-carga-ede.error { border-left-color: #cf5151; color: #9c3737; background: #fff2f2; }
+.estado-carga-ede.exito { border-left-color: #3c9b68; color: #28734d; background: #eef9f2; }
+.acciones-carga-ede { display: flex; justify-content: flex-end; gap: 10px; margin: 20px -22px 0; padding: 16px 22px; border-top: 1px solid #e2e9ef; }
+.acciones-carga-ede button { min-height: 42px; padding: 0 16px; border: 0; border-radius: 10px; font: inherit; font-size: .69rem; font-weight: 800; cursor: pointer; }
+.acciones-carga-ede button:first-child { color: #52647b; background: #edf2f6; }
+.acciones-carga-ede button:last-child { color: #fff; background: linear-gradient(120deg, #489ec5, #59bf77); }
 
 .panel-alertas { margin-bottom: 4px; }
 .reglas-alertas { display: grid; gap: 10px; }
@@ -955,5 +982,6 @@ body.modal-abierto { overflow: hidden; }
   .boton-accion { width: 100%; }
   .regla-alerta { grid-template-columns: 36px 1fr auto; padding: 10px; }
   .metricas-canjes, .acciones-canjes { grid-template-columns: 1fr; }
+  .campos-carga-ede { grid-template-columns: 1fr; }
 }
 .barra-fila[role="button"],.leyenda-item[role="button"],.dona[role="button"]{cursor:pointer}.barra-fila[role="button"]:hover,.barra-fila.grafico-filtro-activo,.leyenda-item[role="button"]:hover,.leyenda-item.grafico-filtro-activo{filter:brightness(1.22);transform:translateX(-2px)}.barra-fila[role="button"]:focus-visible,.leyenda-item[role="button"]:focus-visible,.dona[role="button"]:focus-visible{outline:3px solid #ffd21f;outline-offset:3px}.grafico-filtro-activo{text-shadow:0 0 12px rgba(255,210,31,.48)}
