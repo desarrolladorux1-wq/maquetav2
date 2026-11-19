@@ -23,7 +23,8 @@
   }
   if (document.getElementById('botonAsistenteIA')) return;
   const rutaModulo = location.pathname.toLocaleLowerCase('es');
-  const modulo = rutaModulo.includes('/admin/') ? 'Administración SATCONTROL' : rutaModulo.includes('mcter') ? 'MCTER' : rutaModulo.includes('vale-fise') ? 'Vale FISE' : rutaModulo.includes('masificacion') ? 'Masificación' : 'General';
+  const esAhorroGnv=rutaModulo.includes('ahorro')&&rutaModulo.includes('gnv');
+  const modulo = rutaModulo.includes('/admin/') ? 'Administración SATCONTROL' : esAhorroGnv ? 'Ahorro GNV' : rutaModulo.includes('mcter') ? 'MCTER' : rutaModulo.includes('vale-fise') ? 'Vale FISE' : rutaModulo.includes('masificacion') ? 'Masificación' : 'General';
   const respuestas = {
     'Consultar manual': 'Puedo ayudarte a ubicar procedimientos, definiciones y pasos operativos dentro de la maqueta.',
     'Buscar beneficiario': modulo === 'MCTER' ? 'Utiliza el buscador superior para consultar por código MCTER y luego activa la capa de beneficiarios.' : 'Utiliza el buscador de SATCONTROL para consultar por DNI, ID FISE o código de suministro.',
@@ -37,6 +38,15 @@
   const accionesCabecera=document.querySelector('.cabecera-satcontrol-acciones'); const indicadorEspacio=document.querySelector('.indicador-espacio-satcontrol');
   ['botonSoporteTecnico','botonDocumentosNotariados','botonAsistenteIA'].forEach(id=>{const botonCabecera=document.getElementById(id);if(botonCabecera&&accionesCabecera)accionesCabecera.insertBefore(botonCabecera,indicadorEspacio);});
   const boton=document.getElementById('botonAsistenteIA'); const panel=document.getElementById('panelAsistenteIA'); const conversacion=document.getElementById('conversacionAsistenteIA'); const formulario=document.getElementById('formularioAsistenteIA'); const entrada=document.getElementById('mensajeAsistenteIA');
+  if(esAhorroGnv){
+    panel.classList.add('panel-asistente-gnv');
+    const layout=document.createElement('div'),historial=document.createElement('aside'),principal=document.createElement('div');
+    layout.className='asistente-gnv-layout';historial.className='historial-asistente-gnv';principal.className='principal-asistente-gnv';
+    historial.innerHTML='<strong>Consultas realizadas</strong><button type="button" class="nuevo-chat-gnv" id="nuevoChatGnv">+ Nuevo chat</button><div class="lista-chats-gnv"><button class="activo" type="button"><b>Estado de conversiones</b><small>Hoy · Ahorro GNV</small></button><button type="button"><b>Beneficiarios observados</b><small>Ayer · Ahorro GNV</small></button><button type="button"><b>Reporte por taller</b><small>18 nov. · Ahorro GNV</small></button></div>';
+    principal.append(conversacion,formulario);layout.append(historial,principal);panel.append(layout);
+    historial.querySelector('#nuevoChatGnv').addEventListener('click',()=>{conversacion.innerHTML='<div class="mensaje-ia">Hola, ¿qué deseas consultar sobre Ahorro GNV?</div><div class="acciones-rapidas-ia">'+Object.keys(respuestas).map(texto=>`<button type="button">${texto}</button>`).join('')+'</div>';conversacion.querySelectorAll('.acciones-rapidas-ia button').forEach(opcion=>opcion.addEventListener('click',()=>responder(opcion.textContent)));entrada.focus();});
+    historial.querySelectorAll('.lista-chats-gnv button').forEach(item=>item.addEventListener('click',()=>{historial.querySelectorAll('.lista-chats-gnv button').forEach(boton=>boton.classList.toggle('activo',boton===item));}));
+  }
   function alternar(abrir){panel.hidden=!abrir;boton.setAttribute('aria-expanded',String(abrir));if(abrir)setTimeout(()=>entrada.focus(),50);}
   function agregar(texto,clase=''){const mensaje=document.createElement('div');mensaje.className=`mensaje-ia ${clase}`.trim();mensaje.textContent=texto;conversacion.append(mensaje);conversacion.scrollTop=conversacion.scrollHeight;}
   function responder(texto){agregar(texto,'usuario');setTimeout(()=>agregar(respuestas[texto]||`He recibido tu consulta sobre “${texto}”. En esta maqueta puedo orientarte mediante los accesos rápidos y la información visible del módulo ${modulo}.`),350);}

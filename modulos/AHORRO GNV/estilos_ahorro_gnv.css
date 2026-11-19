@@ -295,6 +295,16 @@ body:not(.pagina-acceso) .trazabilidad-firma-gnv>header>span{color:#dff8ff;borde
 @media(max-width:900px){.liquidaciones-cuerpo-gnv{grid-template-columns:1fr}.lote-liquidaciones-gnv{grid-row:auto}.kpis-liquidaciones-gnv{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.kpis-liquidaciones-gnv,.flujo-firma-gnv{grid-template-columns:1fr}.lote-liquidaciones-gnv>header,.firma-digital-gnv>header,.trazabilidad-firma-gnv>header{display:grid}.acciones-lote-gnv{justify-content:start}}
 
+/* Asistente Ahorro GNV: historial y conversación, tomando como guía la demo PAULET. */
+.pagina-ahorro-gnv .panel-asistente-ia.panel-asistente-gnv{width:min(920px,calc(100vw - 40px));height:min(650px,calc(100dvh - 40px));grid-template-rows:auto minmax(0,1fr);border-color:#b8cfdd;background:#f6f8fb}
+.pagina-ahorro-gnv .panel-asistente-gnv .cabecera-asistente-ia{padding:15px 18px;background:linear-gradient(120deg,#315f83,#3d98b4)}
+.pagina-ahorro-gnv .asistente-gnv-layout{display:grid;grid-template-columns:265px minmax(0,1fr);min-height:0;overflow:hidden}
+.pagina-ahorro-gnv .historial-asistente-gnv{display:flex;flex-direction:column;gap:10px;min-height:0;padding:15px;border-right:1px solid #d7e2eb;background:#fff}
+.pagina-ahorro-gnv .historial-asistente-gnv>strong{color:#24354d;font-size:.72rem}.pagina-ahorro-gnv .nuevo-chat-gnv{height:38px;border:0;border-radius:9px;color:#fff;background:#3f91ad;font:800 .62rem inherit;cursor:pointer}
+.pagina-ahorro-gnv .lista-chats-gnv{display:grid;gap:7px;overflow:auto}.pagina-ahorro-gnv .lista-chats-gnv button{display:grid;gap:4px;padding:10px;border:1px solid transparent;border-radius:10px;color:#344158;background:#f3f6fa;text-align:left;cursor:pointer}.pagina-ahorro-gnv .lista-chats-gnv button.activo{border-color:#8fb8f0;background:#e8f1ff}.pagina-ahorro-gnv .lista-chats-gnv b{font-size:.62rem}.pagina-ahorro-gnv .lista-chats-gnv small{color:#718096;font-size:.5rem}
+.pagina-ahorro-gnv .principal-asistente-gnv{display:grid;grid-template-rows:minmax(0,1fr) auto;min-width:0;background:#fff}.pagina-ahorro-gnv .principal-asistente-gnv .conversacion-asistente-ia{padding:16px 18px}.pagina-ahorro-gnv .principal-asistente-gnv .pie-asistente-ia{padding:12px 18px}
+@media(max-width:700px){.pagina-ahorro-gnv .panel-asistente-ia.panel-asistente-gnv{width:calc(100vw - 20px);height:calc(100dvh - 20px);right:10px;bottom:10px}.pagina-ahorro-gnv .asistente-gnv-layout{grid-template-columns:1fr}.pagina-ahorro-gnv .historial-asistente-gnv{display:none}}
+
 /* Informes digitales y plantillas legales */
 .herramienta-informes-gnv svg{stroke:#3d7895}
 .modal-informes-digitales-gnv{width:min(1140px,97vw);max-height:94vh}

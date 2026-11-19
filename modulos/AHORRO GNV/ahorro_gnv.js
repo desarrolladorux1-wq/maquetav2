@@ -183,7 +183,6 @@
     if(nombre==='ampliar'){$('barraHerramientasGnv').classList.toggle('ampliada');return}
     if(nombre==='mover'){$('barraHerramientasGnv').classList.toggle('movible');boton.classList.toggle('activo');return}
     if(nombre==='opciones'){$('barraHerramientasGnv').classList.toggle('ampliada');return}
-    if(nombre==='liquidaciones'){abrirLiquidacionesGnv();return}
     if(nombre==='validacion-ia'){reiniciarValidacionIa();abrirModal('modalValidacionIaGnv');return}
     herramientaActiva=herramientaActiva===nombre?null:nombre;
     limpiarDibujoHerramienta(false);
