@@ -423,16 +423,14 @@
   function abrirValidacionIA(){
     clearInterval(temporizadorIA);
     mostrarPasoIA(1);
-    document.querySelectorAll('[data-archivo-ia]').forEach(input=>{
-      input.value='';
-      input.closest('label').classList.remove('cargado');
-      input.closest('label').querySelector('[data-nombre-archivo]').textContent='Sin archivo';
-    });
-    $('resultadoGabineteIA').className='observado';
-    $('detalleGabineteIA').textContent='Nitidez 42% · imagen borrosa';
-    $('estadoGabineteIA').textContent='Reintentar';
-    $('totalAprobadasIA').textContent='4';$('totalObservadasIA').textContent='1';
-    $('alertaResultadoIA').hidden=false;
+    $('archivoPdfIA').value='';
+    $('archivoPdfIA').closest('label').classList.remove('cargado');
+    $('nombreArchivoPdfIA').textContent='Sin archivo seleccionado';
+    $('detalleDocumentoIA').textContent='PDF legible · firma detectada · DNI y suministro coinciden';
+    $('estadoDocumentoIA').textContent='Aprobada';
+    $('totalAprobadasIA').textContent='1';$('totalObservadasIA').textContent='0';
+    cambiarVistaValidacionIA('nuevo');
+    renderizarHistorialIA();
     abrirModal('modalValidacionIA');
   }
   function emitirAlertaIA(){
@@ -450,9 +448,9 @@
     let indice=0;
     temporizadorIA=setInterval(()=>{
       if(indice>0){
-        const anterior=filas[indice-1],observado=indice===3;
-        anterior.className=observado?'observado':'aprobado';
-        anterior.querySelector('b').textContent=observado?'Imagen borrosa':'Validación correcta';
+        const anterior=filas[indice-1];
+        anterior.className='aprobado';
+        anterior.querySelector('b').textContent='Validación correcta';
       }
       if(indice<filas.length){
         filas[indice].className='procesando';
@@ -463,8 +461,38 @@
       }
       clearInterval(temporizadorIA);
       $('estadoGeneralIA').textContent='Análisis completado';
-      setTimeout(()=>{mostrarPasoIA(3);emitirAlertaIA();},450);
+      setTimeout(()=>{mostrarPasoIA(3);},450);
     },520);
+  }
+
+  const consultasValidacionIA=[
+    {id:'b7e4f2c1',fecha:'24/03/2025 10:42',dni:'••••••51',suministro:'6000123',estado:'Requiere revisión',analizadas:1,aprobadas:0,observadas:1,detalle:'La firma del representante requiere revisión manual.'},
+    {id:'c3d9a8e4',fecha:'24/03/2025 09:17',dni:'••••••84',suministro:'6000456',estado:'Validado',analizadas:1,aprobadas:1,observadas:0,detalle:'DNI, suministro y firma coinciden con el documento.'},
+    {id:'a1f7d9b0',fecha:'23/03/2025 16:05',dni:'••••••37',suministro:'6000789',estado:'Requiere revisión',analizadas:1,aprobadas:0,observadas:1,detalle:'La dirección declarada no pudo verificarse completamente.'},
+    {id:'d9c2e5f7',fecha:'23/03/2025 11:26',dni:'••••••68',suministro:'6000234',estado:'Validado',analizadas:1,aprobadas:1,observadas:0,detalle:'Documento legible y datos del suministro confirmados.'},
+    {id:'f4a8b6d1',fecha:'22/03/2025 17:40',dni:'••••••92',suministro:'6000456',estado:'Requiere revisión',analizadas:1,aprobadas:0,observadas:1,detalle:'Se requiere confirmar la firma antes de continuar.'}
+  ];
+  let consultaValidacionIASeleccionada='b7e4f2c1';
+  function estadoConsultaIA(estado){return estado==='Validado'?'validado':'revision';}
+  function renderizarDetalleDiagnosticoIA(id){
+    const consulta=consultasValidacionIA.find(item=>item.id===id)||consultasValidacionIA[0];
+    consultaValidacionIASeleccionada=consulta.id;
+    const coincide=consulta.estado==='Validado';
+    $('detalleDiagnosticoIA').innerHTML=`<header><small>DETALLE DEL DIAGNÓSTICO</small><h3>ID de consulta: ${consulta.id}</h3></header><div class="metricas-diagnostico-ia"><article><span>Analizadas</span><b>${consulta.analizadas}</b></article><article><span>Aprobadas</span><b>${consulta.aprobadas}</b></article><article><span>Observadas</span><b>${consulta.observadas}</b></article></div><div class="veredicto-diagnostico-ia ${coincide?'ok':'alerta'}"><b>${coincide?'✓ Validación oficial: Coincide':'! Validación oficial: Requiere revisión'}</b><span>${consulta.detalle}</span></div><div class="acordeones-diagnostico-ia"><details open><summary><i class="${coincide?'ok':'alerta'}">${coincide?'✓':'!'}</i><span>Declaración Jurada<small>${consulta.estado} · PDF analizado</small></span><b>⌃</b></summary><div><p>DNI del beneficiario: <strong>${consulta.dni} ${coincide?'(Coincide)':'(Verificar)'}</strong></p><p>Número de suministro: <strong>${consulta.suministro} (Coincide)</strong></p><p>Firma del representante: <strong>${coincide?'Detectada':'Requiere revisión'}</strong></p></div></details><details><summary><i class="ok">✓</i><span>Legibilidad del PDF<small>Documento procesado correctamente</small></span><b>⌄</b></summary><div><p>El PDF mantiene una resolución apta para revisión humana.</p></div></details></div><button type="button" class="cerrar-detalle-ia" id="cerrarDetalleDiagnosticoIA">Cerrar detalle</button>`;
+    document.querySelectorAll('#tablaHistorialIA tr[data-consulta-ia]').forEach(fila=>fila.classList.toggle('seleccionada',fila.dataset.consultaIa===consulta.id));
+    $('cerrarDetalleDiagnosticoIA').onclick=()=>{$('detalleDiagnosticoIA').innerHTML='<p class="detalle-vacio-ia">Seleccione una consulta para revisar el diagnóstico.</p>';};
+  }
+  function renderizarHistorialIA(){
+    const texto=$('buscarHistorialIA')?.value.trim().toLowerCase()||'',estado=$('estadoHistorialIA')?.value||'';
+    const lista=consultasValidacionIA.filter(item=>(!estado||item.estado===estado)&&(!texto||Object.values(item).join(' ').toLowerCase().includes(texto)));
+    $('tablaHistorialIA').innerHTML=lista.map(item=>`<tr data-consulta-ia="${item.id}"><td>${item.fecha}</td><td><b>${item.id}</b></td><td>${item.dni}</td><td>${item.suministro}</td><td><span class="estado-consulta-ia ${estadoConsultaIA(item.estado)}">${item.estado}</span></td><td><button type="button">Ver diagnóstico</button></td></tr>`).join('')||'<tr><td colspan="6">No hay consultas con esos filtros.</td></tr>';
+    $('tablaHistorialIA').querySelectorAll('[data-consulta-ia]').forEach(fila=>fila.onclick=()=>renderizarDetalleDiagnosticoIA(fila.dataset.consultaIa));
+    renderizarDetalleDiagnosticoIA(consultaValidacionIASeleccionada);
+  }
+  function cambiarVistaValidacionIA(vista){
+    document.querySelectorAll('[data-vista-validacion]').forEach(boton=>boton.classList.toggle('activa',boton.dataset.vistaValidacion===vista));
+    document.querySelectorAll('[data-panel-validacion]').forEach(panel=>panel.hidden=panel.dataset.panelValidacion!==vista);
+    if(vista==='historial')renderizarHistorialIA();
   }
   function cerrarDibujo(e){
     if(herramienta==='poligono'&&puntos.length>=3){
@@ -1000,22 +1028,16 @@
     });
     $('sustentoLiquidacion').onchange=()=>$('nombreSustentoLiquidacion').textContent=$('sustentoLiquidacion').files[0]?.name||'Ningún archivo seleccionado';
     $('exportarLiquidacion').onclick=exportarLiquidacion;
-    const iconoAprobadoIA='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.8"/></svg>';
-    document.querySelectorAll('.detalle-resultados-ia article.aprobado i').forEach(icono=>icono.innerHTML=iconoAprobadoIA);
-    document.querySelectorAll('[data-archivo-ia]').forEach(input=>input.onchange=()=>{
-      const nombre=input.files[0]?.name||'Sin archivo';
-      input.closest('label').classList.toggle('cargado',Boolean(input.files.length));
-      input.closest('label').querySelector('[data-nombre-archivo]').textContent=nombre;
-    });
-    $('iniciarValidacionIA').onclick=iniciarAnalisisIA;
-    $('reintentoGabineteIA').onchange=()=>{
-      if(!$('reintentoGabineteIA').files.length)return;
-      $('resultadoGabineteIA').className='aprobado';$('resultadoGabineteIA').querySelector('i').innerHTML=iconoAprobadoIA;
-      $('detalleGabineteIA').textContent='Nitidez 97% · contenido correcto tras reintento';
-      $('estadoGabineteIA').textContent='Aprobada';
-      $('totalAprobadasIA').textContent='5';$('totalObservadasIA').textContent='0';
-      $('alertaResultadoIA').hidden=true;
+    $('archivoPdfIA').onchange=()=>{
+      const archivo=$('archivoPdfIA').files[0],nombre=archivo?.name||'Sin archivo seleccionado';
+      $('archivoPdfIA').closest('label').classList.toggle('cargado',Boolean(archivo));
+      $('nombreArchivoPdfIA').textContent=nombre;
     };
+    $('iniciarValidacionIA').onclick=iniciarAnalisisIA;
+    $('nuevoAnalisisIA').onclick=()=>{mostrarPasoIA(1);$('archivoPdfIA').value='';$('nombreArchivoPdfIA').textContent='Sin archivo seleccionado';};
+    document.querySelectorAll('[data-vista-validacion]').forEach(boton=>boton.onclick=()=>cambiarVistaValidacionIA(boton.dataset.vistaValidacion));
+    $('buscarHistorialIA').oninput=renderizarHistorialIA;
+    $('estadoHistorialIA').onchange=renderizarHistorialIA;
     $('finalizarValidacionIA').onclick=()=>{$('finalizarValidacionIA').textContent='Validación guardada';setTimeout(()=>{$('modalValidacionIA').close();$('finalizarValidacionIA').textContent='Guardar validación';},650);};
     mapa.on('click',e=>{if(herramienta==='poligono'){puntos.push(e.latlng);figuraTemporal?figuraTemporal.setLatLngs(puntos):figuraTemporal=L.polyline(puntos,{color:'#d68b22',weight:3}).addTo(capaDibujo);}else if(herramienta==='circulo'&&!centroCirculo){centroCirculo=e.latlng;figuraTemporal=L.circle(centroCirculo,{radius:100,color:'#7657c7',fillOpacity:.13}).addTo(capaDibujo);}});
     mapa.on('mousemove',e=>{if(herramienta==='poligono'&&figuraTemporal)figuraTemporal.setLatLngs([...puntos,e.latlng]);if(herramienta==='circulo'&&figuraTemporal)figuraTemporal.setRadius(mapa.distance(centroCirculo,e.latlng));});

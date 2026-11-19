@@ -337,49 +337,14 @@
       <button type="button" data-cerrar-modal="modalValidacionIA" aria-label="Cerrar">×</button>
     </header>
     <div class="modal-cuerpo">
-      <ol class="pasos-validacion-ia" aria-label="Progreso de validación">
-        <li class="activo" data-indicador-ia="1"><i>1</i><span>Cargar evidencias</span></li>
-        <li data-indicador-ia="2"><i>2</i><span>Validación IA</span></li>
-        <li data-indicador-ia="3"><i>3</i><span>Resultados</span></li>
-      </ol>
-
-      <section class="paso-validacion-ia" data-paso-ia="1">
-        <div class="introduccion-ia"><small>PASO 1 DE 3</small><h3>Carga de documentos y evidencias</h3><p>Adjunta la Declaración Jurada en PDF y una fotografía por categoría. La maqueta simulará su validación.</p></div>
-        <div class="carga-evidencias-ia">
-          <label class="documento-ia"><input type="file" accept="application/pdf" data-archivo-ia="Declaración Jurada"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Z"/><path d="M14 3v5h5M9 13h6M9 17h6M9 9h2"/></svg><b>Declaración Jurada</b><span>Seleccionar documento PDF</span><small data-nombre-archivo>Sin archivo</small></label>
-          <label><input type="file" accept="image/*" data-archivo-ia="Fachada"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9H3v-9Z"/><path d="M9 20v-6h6v6"/></svg><b>Fachada</b><span>Seleccionar fotografía</span><small data-nombre-archivo>Sin archivo</small></label>
-          <label><input type="file" accept="image/*" data-archivo-ia="Gabinete"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M15 16h.01"/></svg><b>Gabinete</b><span>Seleccionar fotografía</span><small data-nombre-archivo>Sin archivo</small></label>
-          <label><input type="file" accept="image/*" data-archivo-ia="Ambientes"><svg viewBox="0 0 24 24"><path d="M4 20V6h16v14M4 12h16M10 6v14"/></svg><b>Ambientes</b><span>Seleccionar fotografía</span><small data-nombre-archivo>Sin archivo</small></label>
-          <label><input type="file" accept="image/*" data-archivo-ia="Artefactos"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="9" cy="7" r="1"/><circle cx="15" cy="7" r="1"/><path d="M8 12h8v6H8z"/></svg><b>Artefactos domésticos</b><span>Seleccionar fotografía</span><small data-nombre-archivo>Sin archivo</small></label>
-        </div>
-        <footer class="acciones-validacion-ia"><button class="secundario" type="button" data-cerrar-modal="modalValidacionIA">Cancelar</button><button class="principal" id="iniciarValidacionIA" type="button">Continuar y validar con IA</button></footer>
+      <nav class="pestanas-validacion-ia" aria-label="Validación de documentos"><button type="button" class="activa" data-vista-validacion="nuevo">Nuevo análisis</button><button type="button" data-vista-validacion="historial">Historial de consultas</button></nav>
+      <section data-panel-validacion="nuevo">
+        <ol class="pasos-validacion-ia" aria-label="Progreso de validación"><li class="activo" data-indicador-ia="1"><i>1</i><span>Cargar PDF</span></li><li data-indicador-ia="2"><i>2</i><span>Validación IA</span></li><li data-indicador-ia="3"><i>3</i><span>Resultado</span></li></ol>
+        <section class="paso-validacion-ia" data-paso-ia="1"><div class="introduccion-ia"><small>NUEVO ANÁLISIS</small><h3>Validar Declaración Jurada</h3><p>Adjunta un único archivo PDF. La maqueta simulará la verificación de datos, firma y legibilidad.</p></div><div class="carga-evidencias-ia"><label class="documento-ia"><input id="archivoPdfIA" type="file" accept="application/pdf"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Z"/><path d="M14 3v5h5M9 13h6M9 17h6M9 9h2"/></svg><b>Declaración Jurada en PDF</b><span>Seleccionar un documento PDF</span><small id="nombreArchivoPdfIA">Sin archivo seleccionado</small></label></div><footer class="acciones-validacion-ia"><button class="secundario" type="button" data-cerrar-modal="modalValidacionIA">Cancelar</button><button class="principal" id="iniciarValidacionIA" type="button">Analizar documento</button></footer></section>
+        <section class="paso-validacion-ia" data-paso-ia="2" hidden><div class="introduccion-ia"><small>VALIDACIÓN IA</small><h3>Analizando documento</h3><p>Se revisan la legibilidad, los datos declarados y la firma del representante.</p></div><div class="escaneo-ia"><div class="visor-escaneo-ia"><span></span><svg viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/><circle cx="12" cy="12" r="4"/></svg></div><div><strong id="estadoGeneralIA">Preparando modelo de validación…</strong><small>Modelo demostrativo · análisis preventivo</small></div></div><div class="lista-analisis-ia"><article data-analisis-ia><span>Declaración Jurada PDF</span><b>En espera</b></article></div></section>
+        <section class="paso-validacion-ia" data-paso-ia="3" hidden><div class="introduccion-ia"><small>RESULTADO</small><h3>Diagnóstico del documento</h3><p>La simulación no modifica el expediente ni reemplaza la revisión humana.</p></div><section class="resumen-resultado-ia"><article><span>Analizadas</span><strong>1</strong></article><article><span>Aprobadas</span><strong id="totalAprobadasIA">1</strong></article><article class="observado"><span>Observadas</span><strong id="totalObservadasIA">0</strong></article></section><div class="detalle-resultados-ia"><article class="aprobado"><i>✓</i><div><b>Declaración Jurada</b><small id="detalleDocumentoIA">PDF legible · firma detectada · DNI y suministro coinciden</small></div><span id="estadoDocumentoIA">Aprobada</span></article></div><footer class="acciones-validacion-ia"><button class="secundario" type="button" id="nuevoAnalisisIA">Nuevo análisis</button><button class="principal" id="finalizarValidacionIA" type="button">Guardar validación</button></footer></section>
       </section>
-
-      <section class="paso-validacion-ia" data-paso-ia="2" hidden>
-        <div class="introduccion-ia"><small>PASO 2 DE 3</small><h3>Analizando documentos y evidencias</h3><p>El asistente verifica el PDF, la nitidez, el encuadre y el contenido esperado de cada fotografía.</p></div>
-        <div class="escaneo-ia"><div class="visor-escaneo-ia"><span></span><svg viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/><circle cx="12" cy="12" r="4"/></svg></div><div><strong id="estadoGeneralIA">Preparando modelo de validaciónâ€¦</strong><small>Modelo demostrativo · análisis preventivo</small></div></div>
-        <div class="lista-analisis-ia">
-          <article data-analisis-ia><span>Declaración Jurada PDF</span><b>En espera</b></article>
-          <article data-analisis-ia><span>Fachada</span><b>En espera</b></article>
-          <article data-analisis-ia><span>Gabinete</span><b>En espera</b></article>
-          <article data-analisis-ia><span>Ambientes</span><b>En espera</b></article>
-          <article data-analisis-ia><span>Artefactos domésticos</span><b>En espera</b></article>
-        </div>
-      </section>
-
-      <section class="paso-validacion-ia" data-paso-ia="3" hidden>
-        <div class="introduccion-ia"><small>PASO 3 DE 3</small><h3>Resultados de la validación</h3><p>La evidencia observada puede reemplazarse sin anular el expediente completo.</p></div>
-        <section class="resumen-resultado-ia"><article><span>Analizadas</span><strong>5</strong></article><article><span>Aprobadas</span><strong id="totalAprobadasIA">4</strong></article><article class="observado"><span>Observadas</span><strong id="totalObservadasIA">1</strong></article><article><span>Precisión simulada</span><strong>96%</strong></article></section>
-        <div class="alerta-resultado-ia" id="alertaResultadoIA"><svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg><div><b>Gabinete observado</b><p>La imagen presenta desenfoque y no permite verificar correctamente el medidor. Vuelve a cargar únicamente esta fotografía.</p></div></div>
-        <div class="detalle-resultados-ia">
-          <article class="aprobado"><i>âœ“</i><div><b>Declaración Jurada</b><small>PDF legible · 3 páginas · firma detectada · DNI y suministro coinciden</small></div><span>Aprobada</span></article>
-          <article class="aprobado"><i>âœ“</i><div><b>Fachada</b><small>Nitidez 98% · contenido correcto</small></div><span>Aprobada</span></article>
-          <article class="observado" id="resultadoGabineteIA"><i>!</i><div><b>Gabinete</b><small id="detalleGabineteIA">Nitidez 42% · imagen borrosa</small></div><span id="estadoGabineteIA">Reintentar</span></article>
-          <article class="aprobado"><i>âœ“</i><div><b>Ambientes</b><small>Nitidez 94% · contenido correcto</small></div><span>Aprobada</span></article>
-          <article class="aprobado"><i>âœ“</i><div><b>Artefactos domésticos</b><small>Nitidez 91% · contenido correcto</small></div><span>Aprobada</span></article>
-        </div>
-        <footer class="acciones-validacion-ia"><label class="boton-reintento-ia"><input id="reintentoGabineteIA" type="file" accept="image/*">Reintentar gabinete</label><button class="principal" id="finalizarValidacionIA" type="button">Guardar validación</button></footer>
-      </section>
+      <section class="historial-consultas-ia" data-panel-validacion="historial" hidden><div class="historial-lista-ia"><header><h3>Historial de consultas</h3><p>Consultas realizadas y sus resultados de validación.</p></header><div class="filtros-historial-ia"><input id="buscarHistorialIA" type="search" placeholder="Buscar por ID, suministro o DNI"><select id="estadoHistorialIA"><option value="">Todos los estados</option><option value="Validado">Validado</option><option value="Requiere revisión">Requiere revisión</option></select></div><div class="tabla-historial-ia"><table><thead><tr><th>Fecha y hora</th><th>ID de consulta</th><th>DNI</th><th>Suministro</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="tablaHistorialIA"></tbody></table></div></div><aside class="detalle-diagnostico-ia" id="detalleDiagnosticoIA"></aside></section>
     </div>
   </dialog>
 
