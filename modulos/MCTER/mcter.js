@@ -464,10 +464,13 @@
     document.getElementById('detalleMcter').scrollTo({ top:0, behavior:'smooth' });
   });
 
+  const empresasTransferenciasMcter=['Adinelsa','Chavimochic','CVC Energía','Edelsa','Egepsa','Eilhicha','Electro Oriente','Electro Pangoa','Electro Puno','Electro Sur Este','Electro Tocache','Electro Ucayali','Electrocentro','Electronoroeste','Emseusa','Esempat','Hidrandina','Sersa','Acciona.org Perú'];
   function abrirSeguimientoResoluciones() {
+    const opcionesEmpresa=empresasTransferenciasMcter.map(empresa=>`<option>${empresa}</option>`).join('');
+    const fila=(empresa='',montos=['','',''])=>`<tr><td><select class="campo-modal-mcter" data-empresa-desembolso><option value="">Seleccionar empresa</option>${opcionesEmpresa.replace(`>${empresa}</option>`,` selected>${empresa}</option>`)}</select></td>${montos.map(monto=>`<td><input class="campo-modal-mcter monto-transferencia-mcter" type="number" min="0" step="0.01" inputmode="decimal" value="${monto}" aria-label="Monto mensual"></td>`).join('')}<td class="total-transferencia-mcter">S/ 0.00</td><td><button type="button" class="quitar-fila-transferencia-mcter" data-eliminar-fila-desembolso aria-label="Eliminar fila">×</button></td></tr>`;
     elementos.sobrelineaModal.textContent = 'SEGUIMIENTO DIGITAL DE RESOLUCIONES';
     elementos.tituloModal.textContent = 'Resoluciones y desembolsos';
-    elementos.descripcionModal.textContent = 'Registro de resoluciones de Osinergmin, vinculación de desembolsos y control de saldos por distribuidora.';
+    elementos.descripcionModal.textContent = 'Registro de resoluciones de Osinergmin y programación de transferencias por empresa distribuidora.';
     elementos.contenidoModal.innerHTML = `
       <div class="seguimiento-resoluciones-mcter">
         <section class="bloque-proceso-mcter carga-resolucion-mcter">
@@ -475,28 +478,56 @@
           <div class="form-resolucion-mcter">
             <label>Número de resolución<input id="numeroResolucion" class="campo-modal-mcter" value="OSINERGMIN-184-2026"></label>
             <label>Fecha<input id="fechaResolucion" class="campo-modal-mcter" type="date" value="2026-07-18"></label>
-            <label>Empresa distribuidora<select id="empresaResolucion" class="campo-modal-mcter"><option>SEAL</option><option>Electro Sur Este</option><option>Electrocentro</option><option>Hidrandina</option></select></label>
-            <label>Monto aprobado (S/)<input id="montoResolucion" class="campo-modal-mcter" type="number" value="245000"></label>
           </div>
-          <div class="acciones-proceso-mcter"><button class="boton-proceso-mcter" data-registrar-resolucion type="button">Registrar resolución</button></div>
         </section>
-        <section class="bloque-proceso-mcter">
-          <div class="cabecera-bloque-mcter"><div><small>VINCULACIÓN</small><h3>Registrar desembolso</h3></div><span>Control financiero</span></div>
-          <div class="form-resolucion-mcter tres-columnas">
-            <label>Resolución<select id="resolucionDesembolso" class="campo-modal-mcter"><option>OSINERGMIN-178-2026</option><option>OSINERGMIN-172-2026</option><option>OSINERGMIN-165-2026</option></select></label>
-            <label>Fecha de desembolso<input class="campo-modal-mcter" type="date" value="2026-07-21"></label>
-            <label>Monto desembolsado (S/)<input id="montoDesembolso" class="campo-modal-mcter" type="number" value="45000"></label>
+        <section class="bloque-proceso-mcter transferencias-mcter">
+          <div class="cabecera-bloque-mcter"><div><small>PROGRAMACIÓN DE TRANSFERENCIAS</small><h3>Montos mensuales por empresa</h3></div><div class="acciones-cabecera-transferencias-mcter"><label class="boton-cargar-transferencias-mcter">Subir archivo<input id="archivoTransferenciasMcter" type="file" accept="application/pdf"></label><button type="button" data-agregar-fila-desembolso>Agregar empresa</button></div></div>
+          <div class="configuracion-transferencias-mcter">
+            <label>Período desde<input id="periodoInicioTransferenciasMcter" class="campo-modal-mcter" type="date" value="2026-02-04"></label>
+            <label>Período hasta<input id="periodoFinTransferenciasMcter" class="campo-modal-mcter" type="date" value="2026-04-30"></label>
+            <label>Fecha límite 1<input id="fechaTransferencia1Mcter" class="campo-modal-mcter fecha-transferencia-mcter" type="date" value="2026-03-15"></label>
+            <label>Fecha límite 2<input id="fechaTransferencia2Mcter" class="campo-modal-mcter fecha-transferencia-mcter" type="date" value="2026-04-15"></label>
+            <label>Fecha límite 3<input id="fechaTransferencia3Mcter" class="campo-modal-mcter fecha-transferencia-mcter" type="date" value="2026-05-15"></label>
           </div>
-          <div class="acciones-proceso-mcter"><button class="boton-proceso-mcter secundario" data-vincular-desembolso type="button">Vincular desembolso</button></div>
-        </section>
-        <section class="bloque-proceso-mcter reporte-saldos-mcter">
-          <div class="cabecera-bloque-mcter"><div><small>REPORTE CONTABLE</small><h3>Saldos por empresa</h3></div><button type="button" data-exportar-saldos>Exportar reporte</button></div>
-          <div class="resultados-mcter resumen-resoluciones-mcter"><div><span>Resoluciones</span><strong id="totalResoluciones">12</strong></div><div><span>Monto aprobado</span><strong>S/ 1,840,000</strong></div><div><span>Desembolsado</span><strong>S/ 1,235,000</strong></div><div><span>Saldo pendiente</span><strong id="saldoTotal">S/ 605,000</strong></div></div>
-          <div class="tabla-resoluciones-mcter"><table><thead><tr><th>Empresa</th><th>Resoluciones</th><th>Aprobado</th><th>Desembolsado</th><th>Saldo</th><th>Estado</th></tr></thead><tbody id="tablaSaldosResoluciones"><tr><td>SEAL</td><td>4</td><td>S/ 620,000</td><td>S/ 465,000</td><td>S/ 155,000</td><td><span class="estado-resolucion-mcter vigente">Vigente</span></td></tr><tr><td>Electro Sur Este</td><td>3</td><td>S/ 480,000</td><td>S/ 310,000</td><td>S/ 170,000</td><td><span class="estado-resolucion-mcter parcial">Parcial</span></td></tr><tr><td>Electrocentro</td><td>3</td><td>S/ 440,000</td><td>S/ 290,000</td><td>S/ 150,000</td><td><span class="estado-resolucion-mcter parcial">Parcial</span></td></tr><tr><td>Hidrandina</td><td>2</td><td>S/ 300,000</td><td>S/ 170,000</td><td>S/ 130,000</td><td><span class="estado-resolucion-mcter pendiente">Pendiente</span></td></tr></tbody></table></div>
-          <p class="nota-modal-mcter" id="estadoSeguimiento">Información preparada para revisión contable.</p>
+          <div class="tabla-transferencias-mcter"><table><thead><tr><th>Empresa</th><th class="fecha-transferencia-cabecera" data-fecha-transferencia="1">15/03/2026</th><th class="fecha-transferencia-cabecera" data-fecha-transferencia="2">15/04/2026</th><th class="fecha-transferencia-cabecera" data-fecha-transferencia="3">15/05/2026</th><th>Total trimestre (S/)</th><th aria-label="Acciones"></th></tr></thead><tbody id="filasTransferenciasMcter">${fila('Adinelsa',[1776119.91,1776119.91,1776119.91])}${fila('Chavimochic',[51468.92,51468.92,51468.92])}</tbody></table></div>
+          <p class="nota-modal-mcter" id="estadoCargaTransferenciasMcter">Puedes cargar un PDF para completar la tabla automáticamente.</p>
+          <div class="acciones-proceso-mcter acciones-transferencias-mcter"><button class="boton-proceso-mcter" data-registrar-resolucion type="button">Registrar resolución</button></div>
+          <p class="nota-modal-mcter" id="estadoResolucionMcter">Completa los datos para registrar una resolución.</p>
         </section>
       </div>`;
     elementos.modalProceso.hidden = false;
+    actualizarTransferenciasMcter();
+  }
+
+  function formatearFechaTransferenciaMcter(valor){if(!valor)return 'Fecha';const [anio,mes,dia]=valor.split('-');return `${dia}/${mes}/${anio}`;}
+  function actualizarTransferenciasMcter(){
+    const tabla=$('filasTransferenciasMcter');if(!tabla)return;
+    document.querySelectorAll('.fecha-transferencia-cabecera').forEach(cabecera=>{const campo=$(`fechaTransferencia${cabecera.dataset.fechaTransferencia}Mcter`);cabecera.textContent=formatearFechaTransferenciaMcter(campo?.value);});
+    tabla.querySelectorAll('tr').forEach(fila=>{const total=[...fila.querySelectorAll('.monto-transferencia-mcter')].reduce((acumulado,campo)=>acumulado+Number(campo.value||0),0);fila.querySelector('.total-transferencia-mcter').textContent=`S/ ${total.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}`;});
+  }
+  function agregarFilaTransferenciaMcter(){const tabla=$('filasTransferenciasMcter');if(!tabla)return;const opciones=[...document.querySelectorAll('[data-empresa-desembolso] option')].map(opcion=>`<option value="${opcion.value}">${opcion.textContent}</option>`).join('');tabla.insertAdjacentHTML('beforeend',`<tr><td><select class="campo-modal-mcter" data-empresa-desembolso>${opciones}</select></td><td><input class="campo-modal-mcter monto-transferencia-mcter" type="number" min="0" step="0.01" inputmode="decimal" aria-label="Monto mensual"></td><td><input class="campo-modal-mcter monto-transferencia-mcter" type="number" min="0" step="0.01" inputmode="decimal" aria-label="Monto mensual"></td><td><input class="campo-modal-mcter monto-transferencia-mcter" type="number" min="0" step="0.01" inputmode="decimal" aria-label="Monto mensual"></td><td class="total-transferencia-mcter">S/ 0.00</td><td><button type="button" class="quitar-fila-transferencia-mcter" data-eliminar-fila-desembolso aria-label="Eliminar fila">×</button></td></tr>`);}
+  function montoDesdePdfMcter(valor){const limpio=valor.replace(/\s/g,'');return Number(limpio.includes(',')?limpio.replace(/\./g,'').replace(',','.'):limpio.replace(/,/g,''));}
+  function fechaDesdePdfMcter(valor){const partes=valor.match(/(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4})/);return partes?`${partes[3]}-${partes[2].padStart(2,'0')}-${partes[1].padStart(2,'0')}`:'';}
+  function normalizarTextoPdfMcter(texto){return texto.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+  function periodoDesdePdfMcter(texto){const meses={enero:'01',febrero:'02',marzo:'03',abril:'04',mayo:'05',junio:'06',julio:'07',agosto:'08',setiembre:'09',septiembre:'09',octubre:'10',noviembre:'11',diciembre:'12'},coincidencia=texto.match(/per[ií]odo\s+del\s+(\d{1,2})\s+de\s+([a-záéíóúñ]+)\s+de\s+(\d{4})\s+al\s+(\d{1,2})\s+de\s+([a-záéíóúñ]+)\s+de\s+(\d{4})/i);if(!coincidencia)return[];const [,diaInicio,mesInicio,anioInicio,diaFin,mesFin,anioFin]=coincidencia,inicio=meses[mesInicio.toLowerCase()],fin=meses[mesFin.toLowerCase()];return inicio&&fin?[`${anioInicio}-${inicio}-${diaInicio.padStart(2,'0')}`,`${anioFin}-${fin}-${diaFin.padStart(2,'0')}`]:[];}
+  function aplicarTransferenciasPdfMcter(registros,fechas,periodo=[]){
+    const tabla=$('filasTransferenciasMcter');if(!tabla||!registros.length)return;
+    const primeraFila=tabla.querySelector('tr');tabla.innerHTML=primeraFila.outerHTML;
+    registros.forEach((registro,indice)=>{if(indice>0)agregarFilaTransferenciaMcter();const fila=tabla.rows[indice];fila.querySelector('[data-empresa-desembolso]').value=registro.empresa;fila.querySelectorAll('.monto-transferencia-mcter').forEach((campo,posicion)=>campo.value=registro.montos[posicion]??'');});
+    fechas.slice(0,3).forEach((fecha,indice)=>{const campo=$(`fechaTransferencia${indice+1}Mcter`);if(campo&&fecha)campo.value=fecha;});periodo.forEach((fecha,indice)=>{const campo=$(indice===0?'periodoInicioTransferenciasMcter':'periodoFinTransferenciasMcter');if(campo&&fecha)campo.value=fecha;});actualizarTransferenciasMcter();
+  }
+  async function leerPdfTransferenciasMcter(archivo){
+    const estado=$('estadoCargaTransferenciasMcter');if(!archivo)return;
+    if(!window.pdfjsLib){estado.textContent='No se pudo iniciar el lector de PDF. Inténtalo nuevamente.';return;}
+    try{
+      estado.textContent='Leyendo la tabla del PDF…';
+      const documento=await window.pdfjsLib.getDocument({data:new Uint8Array(await archivo.arrayBuffer()),disableWorker:true}).promise, lineas=[];
+      for(let pagina=1;pagina<=documento.numPages;pagina++){const contenido=await (await documento.getPage(pagina)).getTextContent(),porLinea=new Map();contenido.items.forEach(item=>{const y=Math.round(item.transform[5]/3)*3;if(!porLinea.has(y))porLinea.set(y,[]);porLinea.get(y).push(item);});porLinea.forEach(items=>lineas.push(items.sort((a,b)=>a.transform[4]-b.transform[4]).map(item=>item.str).join(' ')));}
+      const texto=lineas.join(' '),fechas=[...texto.matchAll(/\b\d{1,2}[/.\-]\d{1,2}[/.\-]\d{4}\b/g)].map(resultado=>fechaDesdePdfMcter(resultado[0])).filter(Boolean),periodo=periodoDesdePdfMcter(texto),registros=[];
+      lineas.forEach(linea=>{const empresa=empresasTransferenciasMcter.find(nombre=>linea.toLocaleLowerCase('es').includes(nombre.toLocaleLowerCase('es')));if(!empresa)return;const montos=(linea.match(/\d{1,3}(?:[ .]\d{3})*(?:[,.]\d{2})|\d+(?:[,.]\d{2})/g)||[]).map(montoDesdePdfMcter).filter(Number.isFinite);if(montos.length>=3)registros.push({empresa,montos:montos.slice(0,3)});});
+      if(!registros.length){const textoNormalizado=normalizarTextoPdfMcter(texto);empresasTransferenciasMcter.forEach((empresa,indice)=>{const inicio=textoNormalizado.indexOf(normalizarTextoPdfMcter(empresa));if(inicio<0)return;const siguientes=empresasTransferenciasMcter.slice(indice+1).map(nombre=>textoNormalizado.indexOf(normalizarTextoPdfMcter(nombre),inicio+empresa.length)).filter(posicion=>posicion>=0),fin=siguientes.length?Math.min(...siguientes):texto.length,fragmento=texto.slice(inicio,fin),montos=(fragmento.match(/\d{1,3}(?:[ .]\d{3})*(?:[,.]\d{2})|\d+(?:[,.]\d{2})/g)||[]).map(montoDesdePdfMcter).filter(Number.isFinite);if(montos.length>=3)registros.push({empresa,montos:montos.slice(0,3)});});}
+      const unicos=registros.filter((registro,indice)=>registros.findIndex(item=>item.empresa===registro.empresa)===indice);if(!unicos.length)throw new Error('No se identificaron filas de empresas y montos en el PDF.');aplicarTransferenciasPdfMcter(unicos,fechas,periodo);estado.textContent=`Se cargaron ${unicos.length} empresa${unicos.length===1?'':'s'} desde ${archivo.name}.`;
+    }catch(error){console.error(error);estado.textContent='No se pudo leer la tabla del PDF. Verifica que el archivo contenga texto seleccionable.';}
   }
 
   function abrirModalProceso(tipo, coordenada) {
@@ -552,18 +583,15 @@
   elementos.modalProceso.addEventListener('click',function(evento){
     if(evento.target.closest('[data-cerrar-modal]')) cerrarModalProceso();
     if(evento.target.closest('[data-registrar-resolucion]')) {
-      const numero=$('numeroResolucion').value.trim(); const empresa=$('empresaResolucion').value; const monto=Number($('montoResolucion').value||0);
-      if(!numero||!monto){$('estadoSeguimiento').textContent='Completa el número y el monto de la resolución.';return;}
-      $('totalResoluciones').textContent=String(Number($('totalResoluciones').textContent)+1);
-      $('resolucionDesembolso').add(new Option(numero,numero),0); $('resolucionDesembolso').value=numero;
-      $('estadoSeguimiento').textContent=`Resolución ${numero} registrada para ${empresa} por S/ ${monto.toLocaleString('es-PE')}.`;
+      const numero=$('numeroResolucion').value.trim(); const fecha=$('fechaResolucion').value;
+      if(!numero||!fecha){$('estadoResolucionMcter').textContent='Completa el número y la fecha de la resolución.';return;}
+      $('estadoResolucionMcter').textContent=`Resolución ${numero} registrada correctamente.`;
     }
-    if(evento.target.closest('[data-vincular-desembolso]')) {
-      const resolucion=$('resolucionDesembolso').value; const monto=Number($('montoDesembolso').value||0);
-      $('estadoSeguimiento').textContent=monto ? `Desembolso de S/ ${monto.toLocaleString('es-PE')} vinculado a ${resolucion}.` : 'Ingresa un monto de desembolso válido.';
-    }
-    if(evento.target.closest('[data-exportar-saldos]')) $('estadoSeguimiento').textContent='Reporte de saldos generado para revisión de contabilidad.';
+    if(evento.target.closest('[data-agregar-fila-desembolso]')) {agregarFilaTransferenciaMcter();actualizarTransferenciasMcter();}
+    if(evento.target.closest('[data-eliminar-fila-desembolso]')) {const fila=evento.target.closest('tr');if(fila&&$('filasTransferenciasMcter').rows.length>1)fila.remove();actualizarTransferenciasMcter();}
   });
+  elementos.modalProceso.addEventListener('input',function(evento){if(evento.target.matches('.monto-transferencia-mcter,.fecha-transferencia-mcter'))actualizarTransferenciasMcter();});
+  elementos.modalProceso.addEventListener('change',function(evento){if(evento.target.id==='archivoTransferenciasMcter')leerPdfTransferenciasMcter(evento.target.files[0]);});
   elementos.modalProceso.addEventListener('submit',function(evento){evento.preventDefault();cerrarModalProceso();});
   elementos.generarReporte.addEventListener('click',abrirExportacion);
   elementos.modalExportacion.querySelectorAll('[data-cerrar-exportacion]').forEach(boton=>boton.addEventListener('click',cerrarExportacion));
